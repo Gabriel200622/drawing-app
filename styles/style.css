@@ -1,0 +1,213 @@
+body {
+  min-height: 100vh;
+}
+
+.wrapper {
+  min-height: 100vh;
+  width: 100%;
+}
+
+#content {
+  min-height: 100vh;
+  width: 100%;
+}
+
+.menu_top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 5px;
+  position: absolute;
+  top: 15px;
+  left: 10px;
+  right: 10px;
+}
+
+.settings_button {
+  position: relative;
+}
+
+.settings_button .content {
+  position: absolute;
+  top: 43px;
+  left: 0px;
+  background-color: white;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  width: 230px;
+  display: flex;
+  flex-direction: column;
+  align-items: start;
+  z-index: 9999;
+  padding: 4px;
+  display: none;
+}
+
+.settings_button .content.show {
+  display: block;
+}
+
+.settings_button .content .content_button {
+  padding: 4px 8px;
+  width: 100%;
+  border-radius: 8px;
+  display: flex;
+  justify-content: start;
+}
+
+.settings_button .content .content_button:hover {
+  background-color: #e5e7eb;
+}
+
+.settings_button .button {
+  background-color: #e5e7eb;
+  height: 40px;
+  width: 40px;
+  border-radius: 8px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.toolbox {
+  height: 50px;
+  border-radius: 8px;
+  border: 1px solid #e5e7eb;
+  background-color: white;
+  display: flex;
+  align-items: center;
+  overflow: hidden;
+  padding: 3px;
+}
+
+.toolboxItem {
+  height: 40px;
+  width: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #374151;
+  cursor: pointer;
+}
+
+.toolboxItem.selected {
+  background-color: #e0dfff;
+  border-radius: 8px;
+}
+
+.toolbox_item_img {
+  height: 30px;
+  width: 30px;
+}
+
+.menu_left {
+  background-color: white;
+  border-radius: 8px;
+  border: 1px solid #e5e7eb;
+  position: absolute;
+  width: 200px;
+  height: 300px;
+  left: 10px;
+  top: 100px;
+  padding: 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.paletteLabel {
+  font-size: 15px;
+  font-weight: 400;
+}
+
+.paletteSeparator {
+  height: 25px;
+  width: 1px;
+  background-color: #cccdce;
+  margin: 0px 10px;
+}
+
+.paletteMenuButton {
+  width: 25px;
+  height: 25px;
+  border-radius: 8px;
+  outline-style: solid;
+  outline-width: 1px;
+  outline-color: #e5e7eb;
+}
+
+.paletteMenuOpen {
+  background-color: white;
+  border: 1px solid #e5e7eb;
+  width: 180px;
+  height: 200px;
+  position: absolute;
+  top: -10px;
+  right: -200px;
+  border-radius: 8px;
+  display: none;
+  padding: 15px;
+}
+
+.paletteMenuOpen .arrow {
+  position: absolute;
+  left: 0px;
+  transform-origin: 0px 0px;
+  transform: translateY(220%) rotate(90deg) translateX(-50%);
+  top: 24px;
+}
+
+.paletteMenuOpen.show {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.paletteColors {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 4px;
+}
+
+.paletteBottom {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.colourSwatches {
+  height: 25px;
+  width: 25px;
+  border-radius: 8px;
+  outline-style: solid;
+  outline-width: 1px;
+  outline-color: #e5e7eb;
+  cursor: pointer;
+}
+
+.colourPalette {
+  display: flex;
+  flex-wrap: wrap;
+  position: relative;
+  gap: 4px;
+}
+
+.backgroundPalette {
+  display: flex;
+  flex-wrap: wrap;
+  position: relative;
+  gap: 4px;
+}
+
+.colourPaletteContainer {
+  position: relative;
+}
+
+.backgroundPaletteContainer {
+  position: relative;
+  display: block;
+}
+
+.backgroundPaletteContainer.hide {
+  display: none;
+}

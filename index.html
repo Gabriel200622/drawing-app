@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <script src="lib/p5.min.js"></script>
+    <script src="lib/p5.dom.js"></script>
+
+    <script
+      src="https://code.jquery.com/jquery-3.7.1.js"
+      integrity="sha256-eKhayi8LEQwp4NKxN+CfCh+3qOVUtJn3QNZ0TciWLP4="
+      crossorigin="anonymous"
+    ></script>
+
+    <script src="sketch.js"></script>
+
+    <!-- add extra scripts below -->
+    <script src="toolbox.js"></script>
+    <script src="colourPalette.js"></script>
+    <script src="backgroundPalette.js"></script>
+    <script src="helperFunctions.js"></script>
+
+    <!-- Tools -->
+    <script src="tools/freehandTool.js"></script>
+    <script src="tools/lineToTool.js"></script>
+    <script src="tools/sprayCanTool.js"></script>
+    <script src="tools/mirrorDrawTool.js"></script>
+    <script src="tools/ellipseTool.js"></script>
+    <script src="tools/squareTool.js"></script>
+    <script src="tools/diamondTool.js"></script>
+    <script src="tools/arrowTool.js"></script>
+    <script src="tools/textTool.js"></script>
+    <script src="tools/eraserTool.js"></script>
+    <script src="tools/laserTool.js"></script>
+
+    <!-- Styles -->
+    <link rel="stylesheet" type="text/css" href="styles/style.css" />
+    <link rel="stylesheet" type="text/css" href="styles/index.css" />
+    <title>DrawApp</title>
+  </head>
+
+  <body>
+    <div class="wrapper">
+      <div class="menu_top">
+        <!-- Settings button -->
+        <div class="settings_button">
+          <button id="settings_button" class="button">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="20"
+              height="20"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            >
+              <line x1="4" x2="20" y1="12" y2="12" />
+              <line x1="4" x2="20" y1="6" y2="6" />
+              <line x1="4" x2="20" y1="18" y2="18" />
+            </svg>
+          </button>
+
+          <div class="content" id="settings_button_content">
+            <button class="content_button" id="saveImageButton">
+              Save Image
+            </button>
+            <button class="content_button" id="clearButton">Clear</button>
+          </div>
+        </div>
+
+        <!-- Toolbox -->
+        <div class="toolbox" id="toolbox"></div>
+
+        <div></div>
+      </div>
+
+      <div class="menu_left">
+        <!-- Colour Palette -->
+        <div class="colourPaletteContainer">
+          <label class="colourPaletteLabel">Stroke</label>
+          <div class="colourPalette"></div>
+
+          <div class="paletteMenuOpen">
+            <div class="paletteColors">
+              <div class="arrow">
+                <svg
+                  width="20"
+                  height="10"
+                  viewBox="0 0 30 10"
+                  preserveAspectRatio="none"
+                  style="
+                    fill: white;
+                    filter: drop-shadow(rgba(0, 0, 0, 0.07) 0px 3px 2px);
+                    display: block;
+                  "
+                >
+                  <polygon points="0,0 30,0 15,10"></polygon>
+                </svg>
+              </div>
+            </div>
+
+            <div class="paletteBottom"></div>
+          </div>
+        </div>
+
+        <!-- Background Palette -->
+        <div class="backgroundPaletteContainer hide">
+          <label class="paletteLabel"> Background </label>
+          <div class="backgroundPalette"></div>
+
+          <div class="paletteMenuOpen">
+            <div class="paletteColors">
+              <div class="arrow">
+                <svg
+                  width="20"
+                  height="10"
+                  viewBox="0 0 30 10"
+                  preserveAspectRatio="none"
+                  style="
+                    fill: white;
+                    filter: drop-shadow(rgba(0, 0, 0, 0.07) 0px 3px 2px);
+                    display: block;
+                  "
+                >
+                  <polygon points="0,0 30,0 15,10"></polygon>
+                </svg>
+              </div>
+            </div>
+
+            <div class="paletteBottom"></div>
+          </div>
+        </div>
+
+        <div class="options"></div>
+      </div>
+
+      <div id="content"></div>
+    </div>
+  </body>
+</html>
