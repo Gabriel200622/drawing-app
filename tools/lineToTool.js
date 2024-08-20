@@ -9,31 +9,36 @@ function LineToTool() {
   var startMouseY = -1;
   var drawing = false;
 
-  //draws the line to the screen
+  this.populateOptions = function () {
+    select(".options").html(
+      "<label style='color:black;font-size:20' for='lineToSize'>Line Size</label> <input type='range' min='1' max='25' value='1' class='slider' id='lineToSize'>"
+    );
+  };
+
+  // draws the line to the screen
   this.draw = function () {
-    //only draw when mouse is clicked
-    if (mouseIsPressed) {
-      //if it's the start of drawing a new line
+    push();
+    var size = document.getElementById("lineToSize").value;
+    strokeWeight(size);
+
+    if (toolMousePressed()) {
+      cursor(CROSS);
       if (startMouseX == -1) {
         startMouseX = mouseX;
         startMouseY = mouseY;
         drawing = true;
-        //save the current pixel Array
+        // Load and save pixels array of the canvas
         loadPixels();
       } else {
-        //update the screen with the saved pixels to hide any previous
-        //line between mouse pressed and released
         updatePixels();
-        //draw the line
         line(startMouseX, startMouseY, mouseX, mouseY);
       }
     } else if (drawing) {
-      //save the pixels with the most recent line and reset the
-      //drawing bool and start locations
-      loadPixels();
       drawing = false;
       startMouseX = -1;
       startMouseY = -1;
     }
+
+    pop();
   };
 }

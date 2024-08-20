@@ -10,7 +10,7 @@ function SprayCanTool() {
 
   // Method to handle the drawing logic
   this.draw = function () {
-    if (mouseIsPressed) {
+    if (toolMousePressed()) {
       // Generate random points within the spread area
       for (var i = 0; i < points; i++) {
         point(

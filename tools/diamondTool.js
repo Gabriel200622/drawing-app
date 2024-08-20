@@ -35,7 +35,7 @@ function DiamondTool() {
     var strokeW = select("#diamondTool").value();
     strokeWeight(strokeW);
 
-    if (mouseIsPressed) {
+    if (toolMousePressed()) {
       // Start drawing the diamond on mouse press
       if (start_X === -1) {
         start_X = mouseX;

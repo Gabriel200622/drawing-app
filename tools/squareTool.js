@@ -35,7 +35,7 @@ function SquareTool() {
     var strokeW = select("#rectangleTool").value();
     strokeWeight(strokeW);
 
-    if (mouseIsPressed) {
+    if (toolMousePressed()) {
       // Start drawing the rectangle
       if (start_X === -1) {
         start_X = mouseX;

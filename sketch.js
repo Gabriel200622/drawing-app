@@ -67,7 +67,11 @@ function draw() {
 
 function mouseReleased() {
   // Handle history
-  if (insideCanvas() && toolbox.selectedTool.type !== "notSaveInHistory") {
+  if (
+    insideCanvas() &&
+    toolbox.selectedTool.type !== "notSaveInHistory" &&
+    mouseButton === LEFT
+  ) {
     saveState();
   }
 

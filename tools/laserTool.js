@@ -13,7 +13,7 @@ function LaserTool() {
     stroke(255, 0, 0);
     strokeWeight(3);
 
-    if (mouseIsPressed) {
+    if (toolMousePressed()) {
       if (previousMouseX == -1) {
         previousMouseX = mouseX;
         previousMouseY = mouseY;

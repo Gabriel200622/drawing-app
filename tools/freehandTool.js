@@ -32,7 +32,7 @@ function FreehandTool() {
     var size = document.getElementById("freehandSize").value;
     strokeWeight(size);
 
-    if (mouseIsPressed) {
+    if (toolMousePressed()) {
       // Initialize previous mouse coordinates on mouse press
       if (previousMouseX == -1) {
         previousMouseX = mouseX;

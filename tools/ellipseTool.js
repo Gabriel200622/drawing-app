@@ -47,7 +47,7 @@ function EllipseTool() {
     var strokeW = select("#circleTool").value();
     strokeWeight(strokeW);
 
-    if (mouseIsPressed) {
+    if (toolMousePressed()) {
       // Start drawing the ellipse on mouse press
       if (start_X === -1) {
         start_X = mouseX;

@@ -44,4 +44,30 @@ function HelperFunctions() {
       }
     });
   }
+
+  document.addEventListener("contextmenu", function (event) {
+    event.preventDefault();
+
+    const contextMenu = document.getElementById("contextMenu");
+    contextMenu.style.display = "block";
+    contextMenu.style.left = `${event.pageX}px`;
+    contextMenu.style.top = `${event.pageY}px`;
+  });
+
+  document.addEventListener("click", function () {
+    const contextMenu = document.getElementById("contextMenu");
+    contextMenu.style.display = "none";
+  });
+}
+
+function handleAction(action) {
+  console.log(`You selected ${action}`);
+
+  const contextMenu = document.getElementById("contextMenu");
+
+  contextMenu.style.display = "none";
+}
+
+function toolMousePressed() {
+  return mouseIsPressed && mouseButton === LEFT;
 }

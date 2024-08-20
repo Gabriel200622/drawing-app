@@ -27,7 +27,7 @@ function EraserTool() {
     cursor(CROSS);
     push();
     var size = document.getElementById("eraserSize").value;
-    if (mouseIsPressed) {
+    if (toolMousePressed()) {
       // Initialize previous mouse coordinates on mouse press
       if (pMouseX == -1) {
         pMouseX = mouseX;

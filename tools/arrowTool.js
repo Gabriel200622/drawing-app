@@ -33,7 +33,7 @@ function ArrowTool() {
     var strokeW = select("#arrowTool").value();
     strokeWeight(strokeW);
 
-    if (mouseIsPressed) {
+    if (toolMousePressed()) {
       // Start drawing the arrow on mouse press
       if (start_X === -1) {
         start_X = mouseX;
