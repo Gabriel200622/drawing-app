@@ -50,6 +50,8 @@ function BackgroundPalette() {
     self.selectedColour = c;
 
     this.style("border", "2px solid blue");
+
+    setConfigs("backgroundColor", { color: c });
   };
 
   this.loadMainColours = function () {
@@ -101,6 +103,8 @@ function BackgroundPalette() {
       self.selectedColour = this.value();
       // fill(this.value());
       // stroke(this.value());
+
+      setConfigs("backgroundColor", { color: this.value() });
     });
 
     var menu = document.querySelector(
@@ -145,6 +149,24 @@ function BackgroundPalette() {
         }
       }
     });
+  };
+
+  this.loadSavedColor = function () {
+    const backgroundColor = getConfig("backgroundColor", {
+      color: this.mainColours[0],
+    });
+
+    if (backgroundColor) {
+      this.selectedColour = backgroundColor.color;
+      const button = $(
+        `.backgroundPaletteContainer #${self.selectedColour}Swatch`
+      );
+      if (button) {
+        button["0"].style.border = "2px solid blue";
+      }
+      fill(backgroundColor.color);
+      stroke(backgroundColor.color);
+    }
   };
 
   this.loadMainColours();

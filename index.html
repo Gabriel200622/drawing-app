@@ -18,6 +18,10 @@
     <script src="backgroundPalette.js"></script>
     <script src="helperFunctions.js"></script>
 
+    <!-- nodes code -->
+    <script src="nodes/elements.js"></script>
+    <script src="nodes/handlers.js"></script>
+
     <!-- Tools -->
     <script src="tools/freehandTool.js"></script>
     <script src="tools/lineToTool.js"></script>
@@ -30,6 +34,7 @@
     <script src="tools/textTool.js"></script>
     <script src="tools/eraserTool.js"></script>
     <script src="tools/laserTool.js"></script>
+    <script src="tools/selectTool.js"></script>
 
     <!-- Styles -->
     <link rel="stylesheet" type="text/css" href="styles/style.css" />
@@ -138,9 +143,8 @@
 
       <div id="contextMenu" class="context-menu">
         <ul>
-          <li onclick="handleAction('Paste')">Paste</li>
-          <!-- <li onclick="handleAction('')">Action 2</li>
-          <li onclick="handleAction('Action 3')">Action 3</li> -->
+          <li onclick="handleAction('undo')">Undo</li>
+          <li onclick="handleAction('redo')">Redo</li>
         </ul>
       </div>
     </div>

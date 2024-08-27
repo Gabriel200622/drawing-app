@@ -12,6 +12,9 @@ function EllipseTool() {
   var start_Y = -1;
   var withStroke = true;
 
+  // Enable background color selection for this tool
+  this.backgroundPalette = true;
+
   // Method to add tool options to the UI
   this.populateOptions = function () {
     select(".options").html(
@@ -36,43 +39,46 @@ function EllipseTool() {
     self.loadFromStorage();
   };
 
+  this.currentElementId = null;
+  this.posX = null;
+  this.posY = null;
+
   // Method to handle the drawing logic
   this.draw = function () {
-    cursor(CROSS);
-    var strokeColor = colourP.selectedColour;
-    var fillColor = backgroundP.selectedColour;
-    stroke(strokeColor);
-    fill(fillColor);
-
-    var strokeW = select("#circleTool").value();
-    strokeWeight(strokeW);
-
-    if (toolMousePressed()) {
-      // Start drawing the ellipse on mouse press
-      if (start_X === -1) {
-        start_X = mouseX;
-        start_Y = mouseY;
-        drawEllipse = true;
-        loadPixels();
-      } else {
-        updatePixels();
-        if (!withStroke) {
-          noStroke();
-        }
-        ellipse(start_X, start_Y, mouseX - start_X, mouseY - start_Y);
-      }
-    } else if (drawEllipse) {
-      // Finalize the ellipse drawing on mouse release
-      loadPixels();
-      drawEllipse = false;
-      start_X = -1;
-      start_Y = -1;
+    if (this.currentElementId && this.posX && this.posY) {
+      upsertElement({
+        id: this.currentElementId,
+        type: "ellipse",
+        posX: this.posX,
+        posY: this.posY,
+        sizeX: mouseX - this.posX,
+        sizeY: mouseY - this.posY,
+        bgColor: backgroundP.selectedColour,
+        strokeColor: colourP.selectedColour,
+        strokeWidth: select("#circleTool").value(),
+        stroke: withStroke,
+        selected: false,
+      });
     }
+
+    cursor(CROSS);
   };
 
-  // Enable background color selection for this tool
-  this.backgroundPalette = true;
+  this.mousePressed = function () {
+    this.currentElementId = generateUUID();
+    this.posX = mouseX;
+    this.posY = mouseY;
+  };
 
+  this.mouseReleased = function () {
+    updateElement(this.currentElementId, { selected: true });
+
+    this.currentElementId = null;
+    this.posX = null;
+    this.posY = null;
+  };
+
+  // To save configs
   this.saveInStorage = function () {
     setConfigs(self.name, {
       stroke: select("#cbx").checked() ? true : false,

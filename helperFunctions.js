@@ -61,12 +61,26 @@ function HelperFunctions() {
 }
 
 function handleAction(action) {
-  console.log(`You selected ${action}`);
-
-  const contextMenu = document.getElementById("contextMenu");
-
-  contextMenu.style.display = "none";
+  switch (action) {
+    case "undo":
+      undo();
+      break;
+    case "redo":
+      redo();
+      break;
+    default:
+      console.log(`Unknown action ${action}`);
+  }
 }
+
+// Context menu actions
+const undo = () => {
+  changeHistoryState(-1);
+};
+
+const redo = () => {
+  changeHistoryState(1);
+};
 
 function toolMousePressed() {
   return mouseIsPressed && mouseButton === LEFT;

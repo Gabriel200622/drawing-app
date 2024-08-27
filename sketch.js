@@ -1,4 +1,5 @@
 //global variables that will store the toolbox colour palette
+
 //amnd the helper functions
 var toolbox = null;
 var colourP = null;
@@ -7,6 +8,9 @@ var helpers = null;
 
 let historyStates = [];
 let historyIndex = 0;
+
+/** @type {DrawElement[]} */
+var elements = [];
 
 function setup() {
   //create a canvas to fill the content div from index.html
@@ -37,6 +41,7 @@ function setup() {
   toolbox.addTool(new TextTool());
   toolbox.addTool(new EraserTool());
   toolbox.addTool(new LaserTool());
+  toolbox.addTool(new SelectTool());
 
   const selectedTool = getConfig("selectedTool", toolbox.tools[0].name);
   toolbox.selectTool(selectedTool ?? toolbox.tools[0].name);
@@ -49,13 +54,23 @@ function setup() {
   }, 200);
 
   colourP.loadSavedColor();
+  backgroundP.loadSavedColor();
 }
 
 function draw() {
-  // call the draw function from the selected tool.
-  // hasOwnProperty is a javascript function that tests
-  // if an object contains a particular method or property
-  // if there isn't a draw method the app will alert the user
+  background(255, 255, 255);
+
+  // drawTooltip(mouseX, mouseY);
+
+  for (i = 0; i < elements.length; i++) {
+    nodesHandlers[elements[i].type](elements[i]);
+  }
+
+  if (!insideCanvas() && toolbox.selectedTool.hasOwnProperty("onMouseOut")) {
+    toolbox.selectedTool.onMouseOut();
+  }
+
+  // call the draw function from the selected tool
   if (toolbox.selectedTool.hasOwnProperty("draw")) {
     if (insideCanvas()) {
       toolbox.selectedTool.draw();
@@ -65,6 +80,31 @@ function draw() {
   }
 }
 
+function drawTooltip(x, y) {
+  const padding = 5;
+  const tooltipText = `(${x}, ${y})`;
+
+  // Set text properties
+  textSize(16);
+  textAlign(LEFT, TOP);
+  let textWidthValue = textWidth(tooltipText);
+  let textHeightValue = textAscent() + textDescent();
+
+  // Draw a rectangle behind the text for the tooltip
+  fill(0, 0, 0, 150); // Semi-transparent black background
+  noStroke();
+  rect(
+    x + padding,
+    y + padding,
+    textWidthValue + padding * 2,
+    textHeightValue + padding * 2
+  );
+
+  // Draw the text on top of the rectangle
+  fill(255); // White text color
+  text(tooltipText, x + padding * 2, y + padding * 2);
+}
+
 function mouseReleased() {
   // Handle history
   if (
@@ -72,7 +112,7 @@ function mouseReleased() {
     toolbox.selectedTool.type !== "notSaveInHistory" &&
     mouseButton === LEFT
   ) {
-    saveState();
+    // saveState();
   }
 
   if (toolbox.selectedTool.hasOwnProperty("mouseReleased")) {
@@ -83,6 +123,8 @@ function mouseReleased() {
 }
 
 function mousePressed() {
+  handleElementsSelection();
+
   if (toolbox.selectedTool.hasOwnProperty("mousePressed")) {
     if (!insideCanvas()) return;
 
