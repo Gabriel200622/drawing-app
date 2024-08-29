@@ -3,42 +3,76 @@
 //pixel array.
 function LineToTool() {
   this.icon = `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-minus"><path d="M5 12h14"/></svg>`;
-  this.name = "LineTo";
+  this.name = "lineTo";
 
-  var startMouseX = -1;
-  var startMouseY = -1;
-  var drawing = false;
+  var self = this;
 
+  // Method to add tool options to the UI
   this.populateOptions = function () {
     select(".options").html(
-      "<label style='color:black;font-size:20' for='lineToSize'>Line Size</label> <input type='range' min='1' max='25' value='1' class='slider' id='lineToSize'>"
+      `<label style='color:black;font-size:20px;' for='lineTool'>Stroke width</label> 
+      <input type='range' min='4' max='25' value='1' class='slider' id='lineTool'>`
     );
+
+    document.getElementById("lineTool").addEventListener("change", function () {
+      self.saveInStorage();
+    });
+
+    self.loadFromStorage();
   };
 
-  // draws the line to the screen
+  this.currentElementId = null;
+  this.posX = null;
+  this.posY = null;
+
+  // Method to handle the drawing logic
   this.draw = function () {
-    push();
-    var size = document.getElementById("lineToSize").value;
-    strokeWeight(size);
+    cursor(CROSS);
 
-    if (toolMousePressed()) {
-      cursor(CROSS);
-      if (startMouseX == -1) {
-        startMouseX = mouseX;
-        startMouseY = mouseY;
-        drawing = true;
-        // Load and save pixels array of the canvas
-        loadPixels();
-      } else {
-        updatePixels();
-        line(startMouseX, startMouseY, mouseX, mouseY);
-      }
-    } else if (drawing) {
-      drawing = false;
-      startMouseX = -1;
-      startMouseY = -1;
+    if (this.currentElementId && this.posX && this.posY) {
+      upsertElement({
+        id: this.currentElementId,
+        type: "lineTo",
+        posX: this.posX,
+        posY: this.posY,
+        sizeX: mouseX - this.posX,
+        sizeY: mouseY - this.posY,
+        strokeColor: colourP.selectedColour,
+        selected: false,
+        strokeWidth: select("#lineTool").value(),
+      });
     }
+  };
 
-    pop();
+  this.mousePressed = function () {
+    this.currentElementId = generateUUID();
+    this.posX = mouseX;
+    this.posY = mouseY;
+  };
+
+  this.mouseReleased = function () {
+    updateElement(this.currentElementId, { selected: true });
+
+    this.currentElementId = null;
+    this.posX = null;
+    this.posY = null;
+
+    toolbox.selectTool("selectTool");
+  };
+
+  // To save configs
+  this.saveInStorage = function () {
+    setConfigs(self.name, {
+      size: select("#lineTool").value(),
+    });
+  };
+  this.loadFromStorage = function () {
+    const data = getConfig(self.name, { stroke: true, size: 1 });
+
+    if (data) {
+      const { stroke, size } = data;
+
+      select("#lineTool").value(size);
+    }
   };
 }

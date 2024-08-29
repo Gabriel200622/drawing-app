@@ -6,10 +6,6 @@ function FreehandTool() {
 
   var self = this;
 
-  // Variables to manage previous mouse coordinates
-  var previousMouseX = -1;
-  var previousMouseY = -1;
-
   // Method to add tool options to the UI
   this.populateOptions = function () {
     select(".options").html(
@@ -26,32 +22,51 @@ function FreehandTool() {
     self.loadFromStorage();
   };
 
+  this.currentElementId = null;
+  this.points = [];
+
   // Method to handle the drawing logic
   this.draw = function () {
-    push();
-    var size = document.getElementById("freehandSize").value;
-    strokeWeight(size);
+    cursor(CROSS);
 
-    if (toolMousePressed()) {
-      // Initialize previous mouse coordinates on mouse press
-      if (previousMouseX == -1) {
-        previousMouseX = mouseX;
-        previousMouseY = mouseY;
-      } else {
-        // Draw a line from the previous to the current mouse coordinates
-        line(previousMouseX, previousMouseY, mouseX, mouseY);
-        previousMouseX = mouseX;
-        previousMouseY = mouseY;
-      }
-    } else {
-      // Reset previous mouse coordinates when the mouse is not pressed
-      previousMouseX = -1;
-      previousMouseY = -1;
+    if (this.currentElementId && this.points.length > 0) {
+      upsertElement({
+        id: this.currentElementId,
+        type: "freehand",
+        points: this.points,
+        strokeColor: colourP.selectedColour,
+        strokeWidth: select("#freehandSize").value(),
+        selected: false,
+      });
     }
-
-    pop();
   };
 
+  this.mousePressed = function () {
+    this.currentElementId = generateUUID();
+    this.points = [];
+    this.addPoint(mouseX, mouseY);
+  };
+
+  this.mouseDragged = function () {
+    if (this.currentElementId) {
+      this.addPoint(mouseX, mouseY); // Add point as mouse is dragged
+    }
+  };
+
+  this.mouseReleased = function () {
+    updateElement(this.currentElementId, {
+      points: this.points,
+    });
+
+    this.currentElementId = null;
+    this.points = [];
+  };
+
+  this.addPoint = function (x, y) {
+    this.points.push({ x, y });
+  };
+
+  // To save configs
   this.saveInStorage = function () {
     setConfigs(self.name, {
       size: document.getElementById("freehandSize").value,

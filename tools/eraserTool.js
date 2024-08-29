@@ -7,6 +7,8 @@ function EraserTool() {
 
   var self = this;
 
+  this.toDeleteElements = [];
+
   // Method to add tool options to the UI
   this.populateOptions = function () {
     select(".options").html(
@@ -24,28 +26,41 @@ function EraserTool() {
 
   // Method to handle the erasing logic
   this.draw = function () {
-    cursor(CROSS);
-    push();
-    var size = document.getElementById("eraserSize").value;
-    if (toolMousePressed()) {
-      // Initialize previous mouse coordinates on mouse press
-      if (pMouseX == -1) {
-        pMouseX = mouseX;
-        pMouseY = mouseY;
-      } else {
-        // Erase by drawing a white line with the specified size
-        fill(this.color);
-        strokeWeight(size);
-        stroke(255);
-        line(pMouseX, pMouseY, mouseX, mouseY);
-        pMouseX = mouseX;
-        pMouseY = mouseY;
-      }
-    } else {
-      // Reset previous mouse coordinates when the mouse is not pressed
-      pMouseX = -1;
-      pMouseY = -1;
+    this.drawEraserCursor();
+
+    const { elements } = hoveringElements();
+    const eraserRadius = parseFloat(
+      document.getElementById("eraserSize").value
+    );
+
+    if (mouseIsPressed) {
+      elements.forEach((e) => {
+        this.toDeleteElements.push(e);
+      });
     }
+
+    this.toDeleteElements.forEach((e) => {
+      updateElement(e.id, { deleting: true });
+    });
+  };
+
+  this.mouseReleased = function () {
+    this.toDeleteElements.map((e) => {
+      deleteElement(e.id);
+    });
+    this.toDeleteElements = [];
+  };
+
+  this.drawEraserCursor = function () {
+    push();
+    noCursor();
+    stroke(0);
+    strokeWeight(1.2);
+    noFill();
+
+    const eraserRadius = document.getElementById("eraserSize").value;
+
+    ellipse(mouseX, mouseY, eraserRadius / 2, eraserRadius / 2);
     pop();
   };
 

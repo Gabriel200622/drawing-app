@@ -9,7 +9,6 @@ function HelperFunctions() {
     clearButton.mouseClicked(function () {
       background(255, 255, 255);
       loadPixels();
-      saveState();
     });
   }
 
@@ -74,13 +73,9 @@ function handleAction(action) {
 }
 
 // Context menu actions
-const undo = () => {
-  changeHistoryState(-1);
-};
+const undo = () => {};
 
-const redo = () => {
-  changeHistoryState(1);
-};
+const redo = () => {};
 
 function toolMousePressed() {
   return mouseIsPressed && mouseButton === LEFT;

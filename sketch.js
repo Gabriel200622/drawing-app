@@ -6,9 +6,6 @@ var colourP = null;
 var backgroundP = null;
 var helpers = null;
 
-let historyStates = [];
-let historyIndex = 0;
-
 /** @type {DrawElement[]} */
 var elements = [];
 
@@ -47,28 +44,30 @@ function setup() {
   toolbox.selectTool(selectedTool ?? toolbox.tools[0].name);
 
   background(255);
-  loadDrawing();
-
-  setTimeout(() => {
-    saveState();
-  }, 200);
 
   colourP.loadSavedColor();
   backgroundP.loadSavedColor();
+
+  elements = getSavedElements();
 }
 
 function draw() {
   background(255, 255, 255);
 
-  // drawTooltip(mouseX, mouseY);
-
   for (i = 0; i < elements.length; i++) {
-    nodesHandlers[elements[i].type](elements[i]);
+    if (nodesHandlers[elements[i].type]) {
+      nodesHandlers[elements[i].type](elements[i]);
+    } else {
+      // console.log(`Handler for ${elements[i].type} not found!`);
+    }
   }
 
   if (!insideCanvas() && toolbox.selectedTool.hasOwnProperty("onMouseOut")) {
     toolbox.selectedTool.onMouseOut();
   }
+
+  // drawTooltip(mouseX, mouseY);
+  // console.log(elements);
 
   // call the draw function from the selected tool
   if (toolbox.selectedTool.hasOwnProperty("draw")) {
@@ -112,7 +111,6 @@ function mouseReleased() {
     toolbox.selectedTool.type !== "notSaveInHistory" &&
     mouseButton === LEFT
   ) {
-    // saveState();
   }
 
   if (toolbox.selectedTool.hasOwnProperty("mouseReleased")) {
@@ -123,8 +121,6 @@ function mouseReleased() {
 }
 
 function mousePressed() {
-  handleElementsSelection();
-
   if (toolbox.selectedTool.hasOwnProperty("mousePressed")) {
     if (!insideCanvas()) return;
 
@@ -132,12 +128,29 @@ function mousePressed() {
   }
 }
 
-function keyPressed(e) {
-  if (e.keyCode == 90 && (e.ctrlKey || e.metaKey)) {
-    changeHistoryState(-1);
+function mouseDragged() {
+  if (toolbox.selectedTool.hasOwnProperty("mouseDragged")) {
+    if (!insideCanvas()) return;
+
+    toolbox.selectedTool.mouseDragged();
   }
+}
+
+function keyPressed(e) {
+  // Undo
+  if (e.keyCode == 90 && (e.ctrlKey || e.metaKey)) {
+  }
+  // Redo
   if (e.keyCode == 89 && (e.ctrlKey || e.metaKey)) {
-    changeHistoryState(1);
+  }
+
+  // Del key
+  if (e.keyCode == 46) {
+    elements.forEach((e) => {
+      if (e.selected) {
+        deleteElement(e.id);
+      }
+    });
   }
 
   if (toolbox.selectedTool.hasOwnProperty("keyPressed")) {
@@ -145,52 +158,6 @@ function keyPressed(e) {
 
     toolbox.selectedTool.keyPressed(e);
   }
-}
-
-function saveState() {
-  historyStates.push(get());
-  historyIndex = historyStates.length - 1;
-
-  saveDrawing();
-
-  console.log({
-    historyStates,
-    historyIndex,
-  });
-}
-
-function changeHistoryState(index) {
-  if (
-    historyIndex + index < 0 ||
-    historyIndex + index > historyStates.length - 1
-  ) {
-    return;
-  }
-
-  historyIndex += index;
-
-  const prevState = historyStates[historyIndex];
-  if (!prevState) {
-    return;
-  }
-  background(255);
-  image(prevState, 0, 0);
-
-  saveDrawing();
-
-  console.log({
-    historyStates,
-    historyIndex,
-  });
-}
-
-function loadCurrentState() {
-  const currentState = historyStates[historyIndex];
-  if (!currentState) {
-    return;
-  }
-  background(255);
-  image(currentState, 0, 0);
 }
 
 function insideCanvas() {
@@ -203,67 +170,4 @@ function insideCanvas() {
   }
 
   return true;
-}
-
-function setLocalStorage(key, value) {
-  localStorage.setItem(key, JSON.stringify(value));
-}
-
-function getLocalStorage(key) {
-  return JSON.parse(localStorage.getItem(key));
-}
-
-function getConfigs() {
-  let configs = getLocalStorage("savedConfigs");
-
-  if (!configs) {
-    setLocalStorage("savedConfigs", {});
-    return {};
-  }
-
-  return configs;
-}
-
-function getConfig(config, defaultValue = {}) {
-  const data = getConfigs();
-
-  if (!data[config]) {
-    setConfigs(config, defaultValue);
-  }
-
-  return data[config];
-}
-
-function setConfigs(config, data) {
-  const configs = getConfigs();
-
-  configs[config] = data;
-
-  setLocalStorage("savedConfigs", configs);
-}
-
-function saveDrawing() {
-  let canvasData = canvas.toDataURL();
-  let canvasSize = { width: canvas.width, height: canvas.height };
-  let savedDrawing = {
-    data: canvasData,
-    size: canvasSize,
-  };
-  setLocalStorage("savedDrawing", savedDrawing);
-}
-
-function loadDrawing() {
-  let savedDrawing = getLocalStorage("savedDrawing");
-
-  if (savedDrawing) {
-    let { data } = savedDrawing;
-
-    background(255);
-
-    loadImage(data, function (img) {
-      image(img, 0, 0, width, height); // Draw the loaded image
-    });
-  } else {
-    console.log("No drawing found in local storage!");
-  }
 }

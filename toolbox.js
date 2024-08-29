@@ -1,4 +1,4 @@
-// container object for storing the tools. Functions to add new tools and select a tool
+// Container object for storing the tools. Functions to add new tools and select a tool
 function Toolbox() {
   var self = this;
 
@@ -6,16 +6,8 @@ function Toolbox() {
   this.selectedTool = null;
 
   var toolbarItemClick = function () {
-    //remove any existing borders
-    var items = document.querySelectorAll(".toolboxItem");
-    for (var i = 0; i < items.length; i++) {
-      items[i].classList.remove("selected");
-    }
-
     var toolName = this.id().split("toolboxItem")[0];
     self.selectTool(toolName);
-
-    setConfigs("selectedTool", toolName);
 
     //call loadPixels to make sure most recent changes are saved to pixel array
     loadPixels();
@@ -50,14 +42,20 @@ function Toolbox() {
     //toolName
     for (var i = 0; i < this.tools.length; i++) {
       if (this.tools[i].name == toolName) {
-        //if the tool has an unselectTool method run it.
+        //remove any existing borders
+        let items = document.querySelectorAll(".toolboxItem");
+        for (let i = 0; i < items.length; i++) {
+          items[i].classList.remove("selected");
+        }
+
+        // if the tool has an unselectTool method run it.
         if (
           this.selectedTool != null &&
           this.selectedTool.hasOwnProperty("unselectTool")
         ) {
           this.selectedTool.unselectTool();
         }
-        //select the tool and highlight it on the toolbar
+        // select the tool and highlight it on the toolbar
         this.selectedTool = this.tools[i];
 
         // Add a class to the sidebar item
@@ -80,6 +78,8 @@ function Toolbox() {
         } else {
           $(".backgroundPaletteContainer").addClass("hide");
         }
+
+        setConfigs("selectedTool", toolName);
       }
     }
   };

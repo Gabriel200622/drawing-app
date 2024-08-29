@@ -7,9 +7,6 @@ function EllipseTool() {
   var self = this;
 
   // Variables to manage drawing state
-  var drawEllipse = false;
-  var start_X = -1;
-  var start_Y = -1;
   var withStroke = true;
 
   // Enable background color selection for this tool
@@ -45,6 +42,8 @@ function EllipseTool() {
 
   // Method to handle the drawing logic
   this.draw = function () {
+    cursor(CROSS);
+
     if (this.currentElementId && this.posX && this.posY) {
       upsertElement({
         id: this.currentElementId,
@@ -60,8 +59,6 @@ function EllipseTool() {
         selected: false,
       });
     }
-
-    cursor(CROSS);
   };
 
   this.mousePressed = function () {
@@ -76,6 +73,8 @@ function EllipseTool() {
     this.currentElementId = null;
     this.posX = null;
     this.posY = null;
+
+    toolbox.selectTool("selectTool");
   };
 
   // To save configs
