@@ -3,14 +3,13 @@ function DiamondTool() {
   // SVG icon and tool name
   this.icon = `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-diamond"><path d="M2.7 10.3a2.41 2.41 0 0 0 0 3.41l7.59 7.59a2.41 2.41 0 0 0 3.41 0l7.59-7.59a2.41 2.41 0 0 0 0-3.41l-7.59-7.59a2.41 2.41 0 0 0-3.41 0Z"/></svg>`;
   this.name = "diamond";
-
   var self = this;
-
-  // Enable background color selection for this tool
-  this.backgroundPalette = true;
-
-  // Variables to manage drawing state
+  this.backgroundPalette = true; // Enable background color selection for this tool
   var withStroke = true;
+  this.currentElementId = null;
+  this.posX = null;
+  this.posY = null;
+  this.toolKey = "3";
 
   // Method to add tool options to the UI
   this.populateOptions = function () {
@@ -35,10 +34,6 @@ function DiamondTool() {
 
     self.loadFromStorage();
   };
-
-  this.currentElementId = null;
-  this.posX = null;
-  this.posY = null;
 
   // Method to handle the drawing logic
   this.draw = function () {

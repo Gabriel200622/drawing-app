@@ -3,14 +3,13 @@ function SquareTool() {
   // SVG icon and tool name
   this.icon = `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-square"><rect width="18" height="18" x="3" y="3" rx="2"/></svg>`;
   this.name = "square";
-
   var self = this;
-
-  // Indicates this tool uses background color as palette option
-  this.backgroundPalette = true;
-
-  // Variables to manage drawing state
+  this.backgroundPalette = true; // Indicates this tool uses background color as palette option
   var withStroke = true;
+  this.currentElementId = null;
+  this.posX = null;
+  this.posY = null;
+  this.toolKey = "2";
 
   // Method to add tool options to the UI
   this.populateOptions = function () {
@@ -35,10 +34,6 @@ function SquareTool() {
 
     self.loadFromStorage();
   };
-
-  this.currentElementId = null;
-  this.posX = null;
-  this.posY = null;
 
   // Method to handle the drawing logic
   this.draw = function () {

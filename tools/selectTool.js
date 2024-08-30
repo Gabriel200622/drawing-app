@@ -12,6 +12,7 @@ function SelectTool() {
     cursor(CROSS);
 
     this.handleElementReadyToMove();
+    this.handleHoverElement();
 
     if (mouseIsPressed) {
       if (selectedCorner) {
@@ -27,6 +28,14 @@ function SelectTool() {
 
     const readyToMove = elements.some((e) => e.selected);
     if (readyToMove && !selectedCorner) cursor(MOVE);
+  };
+
+  this.handleHoverElement = function () {
+    const { elements } = hoveringElements();
+
+    if (elements.length > 0) {
+      cursor(MOVE);
+    }
   };
 
   this.mousePressed = function () {

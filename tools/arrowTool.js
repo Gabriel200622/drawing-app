@@ -3,8 +3,11 @@ function ArrowTool() {
   // SVG icon and tool name
   this.icon = `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-move-right"><path d="M18 8L22 12L18 16"/><path d="M2 12H22"/></svg>`;
   this.name = "arrow";
-
   var self = this;
+  this.currentElementId = null;
+  this.posX = null;
+  this.posY = null;
+  this.toolKey = "4";
 
   // Method to add tool options to the UI
   this.populateOptions = function () {
@@ -21,10 +24,6 @@ function ArrowTool() {
 
     self.loadFromStorage();
   };
-
-  this.currentElementId = null;
-  this.posX = null;
-  this.posY = null;
 
   // Method to handle the drawing logic
   this.draw = function () {

@@ -79,6 +79,12 @@ const deleteElement = (id) => {
   saveElements();
 };
 
+const emptyElements = () => {
+  elements = [];
+
+  saveElements();
+};
+
 /**
  * Finds an element by its unique identifier.
  * @param {string} id - The unique identifier of the element.

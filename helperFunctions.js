@@ -7,8 +7,7 @@ function HelperFunctions() {
   let clearButton = select("#clearButton");
   if (clearButton) {
     clearButton.mouseClicked(function () {
-      background(255, 255, 255);
-      loadPixels();
+      emptyElements();
     });
   }
 

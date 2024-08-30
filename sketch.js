@@ -8,6 +8,8 @@ var helpers = null;
 
 /** @type {DrawElement[]} */
 var elements = [];
+let isPanning = false;
+let startX, startY;
 
 function setup() {
   //create a canvas to fill the content div from index.html
@@ -54,11 +56,38 @@ function setup() {
 function draw() {
   background(255, 255, 255);
 
-  for (i = 0; i < elements.length; i++) {
+  if (isPanning) {
+    let dx = mouseX - startX;
+    let dy = mouseY - startY;
+
+    for (let i = 0; i < elements.length; i++) {
+      if (elements[i].type === "freehand") {
+        // Update the points for the freehand element only once
+        const updatedPoints = elements[i].points.map((point) => ({
+          x: point.x + dx,
+          y: point.y + dy,
+        }));
+
+        updateElement(elements[i].id, {
+          points: updatedPoints,
+        });
+      } else {
+        // Update the position for non-freehand elements
+        updateElement(elements[i].id, {
+          posX: elements[i].posX + dx,
+          posY: elements[i].posY + dy,
+        });
+      }
+    }
+
+    // Update startX and startY after the loop
+    startX = mouseX;
+    startY = mouseY;
+  }
+
+  for (let i = 0; i < elements.length; i++) {
     if (nodesHandlers[elements[i].type]) {
       nodesHandlers[elements[i].type](elements[i]);
-    } else {
-      // console.log(`Handler for ${elements[i].type} not found!`);
     }
   }
 
@@ -77,54 +106,42 @@ function draw() {
   } else {
     alert("it doesn't look like your tool has a draw method!");
   }
+
+  if (isPanning) cursor(MOVE);
 }
 
-function drawTooltip(x, y) {
-  const padding = 5;
-  const tooltipText = `(${x}, ${y})`;
+function mousePressed(e) {
+  // Check if the scroll button is clicked
+  if (mouseButton === CENTER) {
+    isPanning = true;
+    startX = mouseX;
+    startY = mouseY;
+  } else {
+    if (toolbox.selectedTool.hasOwnProperty("mousePressed")) {
+      if (!insideCanvas()) return;
 
-  // Set text properties
-  textSize(16);
-  textAlign(LEFT, TOP);
-  let textWidthValue = textWidth(tooltipText);
-  let textHeightValue = textAscent() + textDescent();
-
-  // Draw a rectangle behind the text for the tooltip
-  fill(0, 0, 0, 150); // Semi-transparent black background
-  noStroke();
-  rect(
-    x + padding,
-    y + padding,
-    textWidthValue + padding * 2,
-    textHeightValue + padding * 2
-  );
-
-  // Draw the text on top of the rectangle
-  fill(255); // White text color
-  text(tooltipText, x + padding * 2, y + padding * 2);
+      toolbox.selectedTool.mousePressed();
+    }
+  }
 }
 
-function mouseReleased() {
+function mouseReleased(e) {
+  if (mouseButton === CENTER) {
+    isPanning = false;
+  } else {
+    if (toolbox.selectedTool.hasOwnProperty("mouseReleased")) {
+      if (!insideCanvas()) return;
+
+      toolbox.selectedTool.mouseReleased();
+    }
+  }
+
   // Handle history
   if (
     insideCanvas() &&
     toolbox.selectedTool.type !== "notSaveInHistory" &&
     mouseButton === LEFT
   ) {
-  }
-
-  if (toolbox.selectedTool.hasOwnProperty("mouseReleased")) {
-    if (!insideCanvas()) return;
-
-    toolbox.selectedTool.mouseReleased();
-  }
-}
-
-function mousePressed() {
-  if (toolbox.selectedTool.hasOwnProperty("mousePressed")) {
-    if (!insideCanvas()) return;
-
-    toolbox.selectedTool.mousePressed();
   }
 }
 
@@ -158,6 +175,10 @@ function keyPressed(e) {
 
     toolbox.selectedTool.keyPressed(e);
   }
+
+  if (toolbox.keyPressed) {
+    toolbox.keyPressed(e);
+  }
 }
 
 function insideCanvas() {
@@ -170,4 +191,29 @@ function insideCanvas() {
   }
 
   return true;
+}
+
+function drawTooltip(x, y) {
+  const padding = 5;
+  const tooltipText = `(${x}, ${y})`;
+
+  // Set text properties
+  textSize(16);
+  textAlign(LEFT, TOP);
+  let textWidthValue = textWidth(tooltipText);
+  let textHeightValue = textAscent() + textDescent();
+
+  // Draw a rectangle behind the text for the tooltip
+  fill(0, 0, 0, 150); // Semi-transparent black background
+  noStroke();
+  rect(
+    x + padding,
+    y + padding,
+    textWidthValue + padding * 2,
+    textHeightValue + padding * 2
+  );
+
+  // Draw the text on top of the rectangle
+  fill(255); // White text color
+  text(tooltipText, x + padding * 2, y + padding * 2);
 }

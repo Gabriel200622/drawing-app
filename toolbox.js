@@ -24,25 +24,19 @@ function Toolbox() {
 
   //add a tool to the tools array
   this.addTool = function (tool) {
-    //check that the object tool has an icon and a name
+    // check that the object tool has an icon and a name
     if (!tool.hasOwnProperty("icon") || !tool.hasOwnProperty("name")) {
       alert("make sure your tool has both a name and an icon");
     }
     this.tools.push(tool);
     addToolIcon(tool.icon, tool.name);
-    //if no tool is selected (ie. none have been added so far)
-    //make this tool the selected one.
-    // if (this.selectedTool == null) {
-    //   this.selectTool(tool.name);
-    // }
   };
 
   this.selectTool = function (toolName) {
-    //search through the tools for one that's name matches
-    //toolName
+    // search through the tools for one that's name matches
     for (var i = 0; i < this.tools.length; i++) {
       if (this.tools[i].name == toolName) {
-        //remove any existing borders
+        // remove any existing borders
         let items = document.querySelectorAll(".toolboxItem");
         for (let i = 0; i < items.length; i++) {
           items[i].classList.remove("selected");
@@ -82,5 +76,28 @@ function Toolbox() {
         setConfigs("selectedTool", toolName);
       }
     }
+  };
+
+  this.keyPressed = function (e) {
+    // Handle keys to select a tool
+    this.tools.forEach((tool) => {
+      if (tool.toolKey) {
+        // If the tool key is an array, check all keys
+        if (Array.isArray(tool.toolKey)) {
+          tool.toolKey.forEach((key) => {
+            const keyCode = charToKeyCode(key);
+            if (e.keyCode === keyCode) {
+              this.selectTool(tool.name);
+            }
+          });
+        } else {
+          const keyCode = charToKeyCode(tool.toolKey);
+
+          if (e.keyCode === keyCode) {
+            this.selectTool(tool.name);
+          }
+        }
+      }
+    });
   };
 }
