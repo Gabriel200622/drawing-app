@@ -243,3 +243,17 @@ body {
 .context-menu li:hover {
   background-color: #f0f0f0;
 }
+
+[class^="textToolInput-"] {
+  background-color: transparent;
+  user-select: none;
+  pointer-events: none;
+  border: none;
+  outline: none;
+}
+
+[class^="uploadedImage-"] {
+  pointer-events: none;
+  object-fit: cover;
+  user-select: none;
+}

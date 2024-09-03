@@ -156,6 +156,87 @@ const drawFreehand = (element) => {
 };
 
 /**
+ * @param {DrawElement} element - The element to draw.
+ */
+const drawSpraycan = (element) => {
+  // Draw the selected box if the element is selected
+  if (element.selected) {
+    drawSelectedBox(element);
+  }
+
+  const strokeColor = handleDeletingColor(element, element.strokeColor);
+
+  stroke(strokeColor);
+  strokeWeight(element.strokeWidth);
+
+  // Draw the points
+  for (let i = 0; i < element.points.length; i++) {
+    const { x, y } = element.points[i];
+    point(x, y);
+  }
+};
+
+/**
+ * @param {DrawElement} element - The element to draw.
+ */
+const drawText = (element) => {
+  // Draw the selected box if the element is selected
+  if (element.selected) {
+    drawSelectedBox(element);
+  }
+
+  const strokeColor = handleDeletingColor(element, element.strokeColor);
+
+  const inputExists = document.querySelector(`.textToolInput-${element.id}`);
+
+  if (inputExists) {
+    inputExists.addEventListener("input", (e) => {
+      upsertElement({
+        id: element.id,
+        text: e.target.value,
+      });
+    });
+
+    inputExists.disabled = !element.focus;
+    inputExists.style.left = `${element.posX}px`;
+    inputExists.style.top = `${element.posY}px`;
+    inputExists.style.width = `${element.sizeX}px`;
+    inputExists.style.height = `${element.sizeY}px`;
+    inputExists.style.fontSize = `${element.fontSize}px`;
+    inputExists.style.color = strokeColor;
+  } else {
+    const input = createInput(element.text);
+    input.position(element.posX, element.posY);
+    input.elt.classList.add(`textToolInput-${element.id}`);
+  }
+};
+
+/**
+ * @param {DrawElement} element - The element to draw.
+ */
+const drawImage = (element) => {
+  // Draw the selected box if the element is selected
+  if (element.selected) {
+    drawSelectedBox(element);
+  }
+
+  const imageExists = document.querySelector(`.uploadedImage-${element.id}`);
+
+  if (imageExists) {
+    imageExists.style.left = `${element.posX}px`;
+    imageExists.style.top = `${element.posY}px`;
+    imageExists.style.width = `${element.sizeX}px`;
+    imageExists.style.height = `${element.sizeY}px`;
+    imageExists.style.opacity = element.deleting ? "0.3" : "1";
+  } else {
+    const image = createImg(element.imageUrl);
+    image.size(element.sizeX, element.sizeY);
+    image.position(element.posX, element.posY);
+    image.elt.classList.add(`uploadedImage-${element.id}`);
+  }
+};
+
+/**
  * @param {DrawElement} element - The element to draw a box on.
  */
 const drawSelectedBox = (element) => {
@@ -163,8 +244,10 @@ const drawSelectedBox = (element) => {
   const selectedBoxMargin = 5;
   const buttonSize = 10; // Size of the corner buttons
 
+  const elementBox = getElementBox(element);
+  if (!elementBox) return;
   const { adjustedPosX, adjustedPosY, adjustedSizeX, adjustedSizeY } =
-    getElementBox(element);
+    elementBox;
 
   // Draw the selection box
   strokeWeight(1);
@@ -225,4 +308,7 @@ var nodesHandlers = {
   arrow: drawArrow,
   lineTo: drawLine,
   freehand: drawFreehand,
+  sprayCan: drawSpraycan,
+  text: drawText,
+  image: drawImage,
 };

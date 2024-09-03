@@ -11,6 +11,8 @@ var elements = [];
 let isPanning = false;
 let startX, startY;
 
+var isTyping = false; // For when the user is typing in the text tool
+
 function setup() {
   //create a canvas to fill the content div from index.html
   canvasContainer = select("#content");
@@ -40,6 +42,7 @@ function setup() {
   toolbox.addTool(new TextTool());
   toolbox.addTool(new EraserTool());
   toolbox.addTool(new LaserTool());
+  toolbox.addTool(new ImageTool());
   toolbox.addTool(new SelectTool());
 
   const selectedTool = getConfig("selectedTool", toolbox.tools[0].name);
@@ -50,7 +53,14 @@ function setup() {
   colourP.loadSavedColor();
   backgroundP.loadSavedColor();
 
-  elements = getSavedElements();
+  elements = getSavedElements() ?? [];
+
+  // Call the setup function for each tool in the toolbox
+  toolbox.tools.forEach((tool) => {
+    if (tool?.setup) {
+      tool.setup(); // Call the setup function for each tool
+    }
+  });
 }
 
 function draw() {
@@ -61,7 +71,7 @@ function draw() {
     let dy = mouseY - startY;
 
     for (let i = 0; i < elements.length; i++) {
-      if (elements[i].type === "freehand") {
+      if (elements[i].type === "freehand" || elements[i].type === "sprayCan") {
         // Update the points for the freehand element only once
         const updatedPoints = elements[i].points.map((point) => ({
           x: point.x + dx,
@@ -85,7 +95,7 @@ function draw() {
     startY = mouseY;
   }
 
-  for (let i = 0; i < elements.length; i++) {
+  for (let i = 0; i < elements?.length; i++) {
     if (nodesHandlers[elements[i].type]) {
       nodesHandlers[elements[i].type](elements[i]);
     }
@@ -120,8 +130,16 @@ function mousePressed(e) {
     if (toolbox.selectedTool.hasOwnProperty("mousePressed")) {
       if (!insideCanvas()) return;
 
-      toolbox.selectedTool.mousePressed();
+      toolbox.selectedTool.mousePressed(e);
     }
+  }
+}
+
+function doubleClicked(e) {
+  if (toolbox.selectedTool.hasOwnProperty("doubleClicked")) {
+    if (!insideCanvas()) return;
+
+    toolbox.selectedTool.doubleClicked(e);
   }
 }
 
@@ -132,7 +150,7 @@ function mouseReleased(e) {
     if (toolbox.selectedTool.hasOwnProperty("mouseReleased")) {
       if (!insideCanvas()) return;
 
-      toolbox.selectedTool.mouseReleased();
+      toolbox.selectedTool.mouseReleased(e);
     }
   }
 
@@ -145,11 +163,11 @@ function mouseReleased(e) {
   }
 }
 
-function mouseDragged() {
+function mouseDragged(e) {
   if (toolbox.selectedTool.hasOwnProperty("mouseDragged")) {
     if (!insideCanvas()) return;
 
-    toolbox.selectedTool.mouseDragged();
+    toolbox.selectedTool.mouseDragged(e);
   }
 }
 
@@ -182,7 +200,8 @@ function keyPressed(e) {
 }
 
 function insideCanvas() {
-  var elementUnderMouse = document.elementFromPoint(mouseX, mouseY);
+  let elementUnderMouse = document.elementFromPoint(mouseX, mouseY);
+
   if (
     !elementUnderMouse ||
     elementUnderMouse.tagName.toLowerCase() !== "canvas"
@@ -193,6 +212,9 @@ function insideCanvas() {
   return true;
 }
 
+/**
+ * Draw a tooltip at the given x and y position. The tooltip will display the x and y coordinates for testing purposes.
+ */
 function drawTooltip(x, y) {
   const padding = 5;
   const tooltipText = `(${x}, ${y})`;

@@ -5,21 +5,25 @@ function Toolbox() {
   this.tools = [];
   this.selectedTool = null;
 
-  var toolbarItemClick = function () {
-    var toolName = this.id().split("toolboxItem")[0];
-    self.selectTool(toolName);
+  var toolbarItemClick = function (tool, e) {
+    if (tool?.onIconClick) {
+      tool.onIconClick();
+    }
 
-    //call loadPixels to make sure most recent changes are saved to pixel array
+    self.selectTool(tool.name);
+
+    // call loadPixels to make sure most recent changes are saved to pixel array
     loadPixels();
   };
 
   //add a new tool icon to the html page
-  var addToolIcon = function (icon, name) {
-    var toolboxItem = createDiv(icon);
+  var addToolIcon = function (tool) {
+    var toolboxItem = createDiv(tool.icon);
     toolboxItem.class("toolboxItem");
-    toolboxItem.id(name + "toolboxItem");
+    toolboxItem.id(tool.name + "toolboxItem");
     toolboxItem.parent("toolbox");
-    toolboxItem.mouseClicked(toolbarItemClick);
+
+    toolboxItem.mouseClicked((e) => toolbarItemClick(tool, e));
   };
 
   //add a tool to the tools array
@@ -29,7 +33,7 @@ function Toolbox() {
       alert("make sure your tool has both a name and an icon");
     }
     this.tools.push(tool);
-    addToolIcon(tool.icon, tool.name);
+    addToolIcon(tool);
   };
 
   this.selectTool = function (toolName) {
@@ -81,7 +85,7 @@ function Toolbox() {
   this.keyPressed = function (e) {
     // Handle keys to select a tool
     this.tools.forEach((tool) => {
-      if (tool.toolKey) {
+      if (tool.toolKey && !isTyping) {
         // If the tool key is an array, check all keys
         if (Array.isArray(tool.toolKey)) {
           tool.toolKey.forEach((key) => {

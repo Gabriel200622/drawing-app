@@ -7,7 +7,7 @@
 /**
  * @typedef {Object} DrawElement
  * @property {string} id - The unique identifier of the element.
- * @property {"ellipse" | "square" | "diamond" | "arrow" | "lineTo" | "freehand" | "sprayCan" | "mirrorDraw" | "text"} type - The type of the element.
+ * @property {"ellipse" | "square" | "diamond" | "arrow" | "lineTo" | "freehand" | "sprayCan" | "mirrorDraw" | "text" | "image"} type - The type of the element.
  * @property {number} posX - The X position of the element.
  * @property {number} posY - The Y position of the element.
  * @property {number} sizeX - The width of the element.
@@ -19,6 +19,11 @@
  * @property {boolean} selected - Whether the element is selected.
  * @property {Point[]} points - The points of the element.
  * @property {boolean} deleting - Whether the element is being deleted.
+ * @property {string} text - The text of the element.
+ * @property {boolean} focus - Whether the element is focused.
+ * @property {number} fontSize - The font size of the text.
+ * @property {string} imageUrl - The URL of the image.
+ * @property {boolean} editingImg - Whether the image is being edited.
  */
 
 /**
@@ -74,12 +79,30 @@ const deleteElement = (id) => {
   const index = elements.findIndex((e) => e.id === id);
   if (index === -1) return;
 
+  const element = elements[index];
+  if (element.type === "text") {
+    removeInput(element);
+  }
+  if (element.type === "image") {
+    removeImage(element);
+  }
+
   elements.splice(index, 1);
 
   saveElements();
 };
 
 const emptyElements = () => {
+  // Delete the elements from the html
+  elements.forEach((element) => {
+    if (element.type === "text") {
+      removeInput(element);
+    }
+    if (element.type === "image") {
+      removeImage(element);
+    }
+  });
+
   elements = [];
 
   saveElements();
@@ -98,7 +121,8 @@ const findElementById = (id) => {
  * @param {DrawElement} element - The element to get the box.
  */
 const getElementBox = (element) => {
-  if (element.type === "freehand") return getFreehandBox(element);
+  if (element.type === "freehand" || element.type === "sprayCan")
+    return getFreehandBox(element);
 
   const adjustedPosX =
     element.sizeX < 0 ? element.posX + element.sizeX : element.posX;
@@ -120,7 +144,7 @@ const getElementBox = (element) => {
  * @param {DrawElement} element - The element to get the box.
  */
 const getFreehandBox = (element) => {
-  if (element.type !== "freehand") return null;
+  if (element.type !== "sprayCan" && element.type !== "freehand") return null;
 
   const minX = Math.min(...element.points.map((p) => p.x));
   const minY = Math.min(...element.points.map((p) => p.y));
@@ -152,8 +176,10 @@ const hoveringElements = () => {
   const elementsFound = [];
 
   for (const element of elements) {
-    const { adjustedSizeY, adjustedSizeX, adjustedPosX, adjustedPosY } =
-      getElementBox(element);
+    const elementBox = getElementBox(element);
+    if (!elementBox) return;
+    const { adjustedPosX, adjustedPosY, adjustedSizeX, adjustedSizeY } =
+      elementBox;
 
     const topLeftX = adjustedPosX;
     const topLeftY = adjustedPosY;
@@ -248,4 +274,58 @@ const saveElements = () => {
  */
 const getSavedElements = () => {
   return getConfig("nodes", []);
+};
+
+// Inputs helpers
+
+/**
+ * Focus on the input of the element.
+ * @param {DrawElement} element - The element to focus on.
+ */
+const inputFocus = (element) => {
+  upsertElement({
+    id: element.id,
+    focus: true,
+  });
+
+  const input = document.querySelector(`.textToolInput-${element.id}`);
+  input.focus();
+  input.select();
+
+  isTyping = true;
+};
+
+/**
+ * Unfocus the input of the element.
+ * @param {DrawElement} element - The element to unfocus.
+ */
+const inputUnfocus = (element) => {
+  if (element?.text === "" || !element?.text) {
+    deleteElement(element.id);
+  } else {
+    upsertElement({
+      id: element.id,
+      focus: false,
+    });
+  }
+
+  isTyping = false;
+};
+
+/**
+ * Remove the input of the element.
+ * @param {DrawElement} element - The element to remove the input.
+ */
+const removeInput = (element) => {
+  const inputExists = document.querySelector(`.textToolInput-${element.id}`);
+  if (inputExists) inputExists.remove();
+
+  isTyping = false;
+};
+
+// Image helpers
+
+const removeImage = (element) => {
+  const imageExists = document.querySelector(`.uploadedImage-${element.id}`);
+  if (imageExists) imageExists.remove();
 };
