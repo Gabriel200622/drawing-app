@@ -9,7 +9,7 @@ function SprayCanTool() {
   this.toolKey = "7";
 
   // Method to add tool options to the UI
-  this.populateOptions = function () {
+  this.populateOptions = function (custom) {
     select(".options").html(
       `<label for='freehandSize'>Points size</label>
       <input type='range' min='1' max='15' value='1' class='slider' id='pointsSize'>`
@@ -17,8 +17,10 @@ function SprayCanTool() {
 
     document
       .getElementById("pointsSize")
-      .addEventListener("change", function () {
+      .addEventListener("input", function () {
         self.saveInStorage();
+
+        custom?.changeStrokeWidth(document.getElementById("pointsSize").value);
       });
 
     self.loadFromStorage();

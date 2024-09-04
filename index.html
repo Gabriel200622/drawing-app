@@ -20,6 +20,7 @@
     <script src="local-storage.js"></script>
     <script src="configs.js"></script>
     <script src="keys.js"></script>
+    <script src="canvasBackground.js"></script>
 
     <!-- nodes code -->
     <script src="nodes/elements.js"></script>
@@ -39,6 +40,8 @@
     <script src="tools/laserTool.js"></script>
     <script src="tools/selectTool.js"></script>
     <script src="tools/imageTool.js"></script>
+    <script src="tools/angleBrushTool.js"></script>
+    <script src="tools/rainbowBrushTool.js"></script>
 
     <!-- Styles -->
     <link rel="stylesheet" type="text/css" href="styles/style.css" />
@@ -73,7 +76,16 @@
             <button class="content_button" id="saveImageButton">
               Save Image
             </button>
+
             <button class="content_button" id="clearButton">Clear</button>
+
+            <div class="separator"></div>
+
+            <label class="change_bg_color_button" id="">
+              Change background color
+            </label>
+
+            <div class="bg_colors_container"></div>
           </div>
         </div>
 

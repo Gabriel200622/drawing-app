@@ -57,6 +57,13 @@ function ColourPalette() {
     this.style("border", "2px solid blue");
 
     setConfigs("strokeColor", { color: c });
+
+    self.callSelectTool(c);
+  };
+
+  this.callSelectTool = function (c) {
+    const selectTool = toolbox.tools.find((tool) => tool.name === "selectTool");
+    selectTool.onColorChange({ strokeColor: c });
   };
 
   this.loadMainColours = function () {
@@ -114,6 +121,7 @@ function ColourPalette() {
       stroke(this.value());
 
       setConfigs("strokeColor", { color: this.value() });
+      self.callSelectTool(this.value());
     });
 
     var menu = document.querySelector(

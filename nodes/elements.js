@@ -2,12 +2,13 @@
  * @typedef {Object} Point
  * @property {number} x - The X position of the point.
  * @property {number} y - The Y position of the point.
+ * @property {any} color - The color of the point.
  */
 
 /**
  * @typedef {Object} DrawElement
  * @property {string} id - The unique identifier of the element.
- * @property {"ellipse" | "square" | "diamond" | "arrow" | "lineTo" | "freehand" | "sprayCan" | "mirrorDraw" | "text" | "image"} type - The type of the element.
+ * @property {"ellipse" | "square" | "diamond" | "arrow" | "lineTo" | "freehand" | "sprayCan" | "mirrorDraw" | "text" | "image" | "angleBrush" | "rainbowBrush"} type - The type of the element.
  * @property {number} posX - The X position of the element.
  * @property {number} posY - The Y position of the element.
  * @property {number} sizeX - The width of the element.
@@ -121,8 +122,7 @@ const findElementById = (id) => {
  * @param {DrawElement} element - The element to get the box.
  */
 const getElementBox = (element) => {
-  if (element.type === "freehand" || element.type === "sprayCan")
-    return getFreehandBox(element);
+  if (pointsBasedTool(element)) return getFreehandBox(element);
 
   const adjustedPosX =
     element.sizeX < 0 ? element.posX + element.sizeX : element.posX;
@@ -144,7 +144,7 @@ const getElementBox = (element) => {
  * @param {DrawElement} element - The element to get the box.
  */
 const getFreehandBox = (element) => {
-  if (element.type !== "sprayCan" && element.type !== "freehand") return null;
+  if (!pointsBasedTool(element)) return null;
 
   const minX = Math.min(...element.points.map((p) => p.x));
   const minY = Math.min(...element.points.map((p) => p.y));

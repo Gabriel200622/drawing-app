@@ -1,5 +1,13 @@
 //global variables that will store the toolbox colour palette
 
+const BG_COLORS = [
+  { color: "#ffffff" },
+  { color: "#f8f9fa" },
+  { color: "#f5faff" },
+  { color: "#fffce8" },
+  { color: "#fdf8f6" },
+];
+
 //amnd the helper functions
 var toolbox = null;
 var colourP = null;
@@ -10,6 +18,7 @@ var helpers = null;
 var elements = [];
 let isPanning = false;
 let startX, startY;
+var backgroundColor = BG_COLORS[0].color;
 
 var isTyping = false; // For when the user is typing in the text tool
 
@@ -38,6 +47,8 @@ function setup() {
   toolbox.addTool(new LineToTool());
   toolbox.addTool(new FreehandTool());
   toolbox.addTool(new SprayCanTool());
+  toolbox.addTool(new AngleBrushTool());
+  toolbox.addTool(new RainbowBrushTool());
   toolbox.addTool(new MirrorDrawTool());
   toolbox.addTool(new TextTool());
   toolbox.addTool(new EraserTool());
@@ -64,18 +75,19 @@ function setup() {
 }
 
 function draw() {
-  background(255, 255, 255);
+  background(backgroundColor);
 
   if (isPanning) {
     let dx = mouseX - startX;
     let dy = mouseY - startY;
 
     for (let i = 0; i < elements.length; i++) {
-      if (elements[i].type === "freehand" || elements[i].type === "sprayCan") {
+      if (pointsBasedTool(elements[i])) {
         // Update the points for the freehand element only once
         const updatedPoints = elements[i].points.map((point) => ({
           x: point.x + dx,
           y: point.y + dy,
+          color: point.color ?? undefined,
         }));
 
         updateElement(elements[i].id, {

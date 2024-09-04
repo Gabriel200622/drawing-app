@@ -12,7 +12,7 @@ function SquareTool() {
   this.toolKey = "2";
 
   // Method to add tool options to the UI
-  this.populateOptions = function () {
+  this.populateOptions = function (custom) {
     select(".options").html(
       `<label style='color:black;font-size:20px;' for='squareTool'>Stroke width</label> 
       <input type='range' min='4' max='25' value='1' class='slider' id='squareTool'> 
@@ -24,12 +24,16 @@ function SquareTool() {
     select("#cbx").mouseClicked(function () {
       withStroke = !withStroke;
       self.saveInStorage();
+
+      custom?.toggleStroke(withStroke);
     });
 
     document
       .getElementById("squareTool")
-      .addEventListener("change", function () {
+      .addEventListener("input", function () {
         self.saveInStorage();
+
+        custom?.changeStrokeWidth(select("#squareTool").value());
       });
 
     self.loadFromStorage();

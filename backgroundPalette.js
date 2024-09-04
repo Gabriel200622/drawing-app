@@ -52,6 +52,13 @@ function BackgroundPalette() {
     this.style("border", "2px solid blue");
 
     setConfigs("backgroundColor", { color: c });
+
+    self.callSelectTool(c);
+  };
+
+  this.callSelectTool = function (c) {
+    const selectTool = toolbox.tools.find((tool) => tool.name === "selectTool");
+    selectTool.onColorChange({ bgColor: c });
   };
 
   this.loadMainColours = function () {
@@ -105,6 +112,8 @@ function BackgroundPalette() {
       // stroke(this.value());
 
       setConfigs("backgroundColor", { color: this.value() });
+
+      self.callSelectTool(this.value());
     });
 
     var menu = document.querySelector(

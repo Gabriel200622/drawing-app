@@ -5,14 +5,18 @@ function SelectTool() {
   this.toolKey = ["s"];
   let selectedElement = null;
   let selectedCorner = null;
+  this.backgroundPalette = true;
 
   const buttonSize = 10;
+
+  // this.populateOptions = function () {};
 
   this.draw = function () {
     cursor(CROSS);
 
     this.handleElementReadyToMove();
     this.handleHoverElement();
+    this.populateCurrentElementOptions();
 
     if (mouseIsPressed) {
       if (selectedCorner) {
@@ -20,6 +24,63 @@ function SelectTool() {
       } else {
         this.handleMoveElement();
       }
+    }
+  };
+
+  this.onColorChange = function (color) {
+    const selectedElements = elements.filter((element) => element.selected);
+
+    if (selectedElements.length > 0) {
+      selectedElements.forEach((element) => {
+        if (element.selected) {
+          upsertElement({
+            id: element.id,
+            strokeColor: color.strokeColor ?? element.strokeColor,
+            bgColor: color.bgColor ?? element.bgColor,
+          });
+        }
+      });
+    }
+  };
+
+  this.populateCurrentElementOptions = function () {
+    const selectedElements = elements.filter((element) => element.selected);
+
+    if (selectedElements.length > 0) {
+      const currentElement = selectedElements[0];
+
+      if (currentElement.selected) {
+        const tool = toolbox.tools.find((t) => t.name === currentElement.type);
+
+        if (!tool?.populateOptions) {
+          select(".options").html(``);
+        }
+
+        tool?.populateOptions({
+          toggleStroke: (s) => {
+            upsertElement({
+              id: currentElement.id,
+              stroke: s,
+            });
+          },
+          changeStrokeWidth: (st) => {
+            upsertElement({
+              id: currentElement.id,
+              strokeWidth: st,
+            });
+          },
+          changeFontSize: (fs) => {
+            upsertElement({
+              id: currentElement.id,
+              fontSize: fs,
+            });
+          },
+        });
+      } else {
+        select(".options").html(``);
+      }
+    } else {
+      select(".options").html(``);
     }
   };
 
@@ -64,7 +125,7 @@ function SelectTool() {
   this.handleMoveElement = function () {
     elements.forEach((element) => {
       if (element.selected && !selectedCorner) {
-        if (element.type === "freehand" || element.type === "sprayCan") {
+        if (pointsBasedTool(element)) {
           const { points } = element;
 
           const dx = mouseX - pmouseX;
@@ -73,6 +134,7 @@ function SelectTool() {
           const newPoints = points.map((point) => ({
             x: point.x + dx,
             y: point.y + dy,
+            color: point.color ?? undefined,
           }));
 
           updateElement(element.id, { points: newPoints });

@@ -12,7 +12,7 @@ function EllipseTool() {
   this.toolKey = "1";
 
   // Method to add tool options to the UI
-  this.populateOptions = function () {
+  this.populateOptions = function (custom) {
     select(".options").html(
       `<label style='color:black;font-size:20px;' for='circleTool'>Stroke width</label> 
       <input type='range' min='4' max='25' value='1' class='slider' id='circleTool'> 
@@ -24,12 +24,17 @@ function EllipseTool() {
     select("#cbx").mouseClicked(function () {
       withStroke = !withStroke;
       self.saveInStorage();
+
+      custom?.toggleStroke(withStroke);
     });
 
+    // Update stroke width
     document
       .getElementById("circleTool")
-      .addEventListener("change", function () {
+      .addEventListener("input", function () {
         self.saveInStorage();
+
+        custom?.changeStrokeWidth(select("#circleTool").value());
       });
 
     self.loadFromStorage();

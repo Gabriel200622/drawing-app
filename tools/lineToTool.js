@@ -11,14 +11,16 @@ function LineToTool() {
   this.toolKey = "5";
 
   // Method to add tool options to the UI
-  this.populateOptions = function () {
+  this.populateOptions = function (custom) {
     select(".options").html(
       `<label style='color:black;font-size:20px;' for='lineTool'>Stroke width</label> 
       <input type='range' min='4' max='25' value='1' class='slider' id='lineTool'>`
     );
 
-    document.getElementById("lineTool").addEventListener("change", function () {
+    document.getElementById("lineTool").addEventListener("input", function () {
       self.saveInStorage();
+
+      custom?.changeStrokeWidth(select("#lineTool").value());
     });
 
     self.loadFromStorage();

@@ -1,5 +1,6 @@
 body {
   min-height: 100vh;
+  overflow: hidden;
 }
 
 .wrapper {
@@ -21,10 +22,12 @@ body {
   top: 15px;
   left: 10px;
   right: 10px;
+  z-index: 60;
 }
 
 .settings_button {
   position: relative;
+  z-index: 60;
 }
 
 .settings_button .content {
@@ -114,6 +117,7 @@ body {
   flex-direction: column;
   gap: 15px;
   user-select: none;
+  z-index: 50;
 }
 
 .paletteLabel {
@@ -256,4 +260,31 @@ body {
   pointer-events: none;
   object-fit: cover;
   user-select: none;
+}
+
+.separator {
+  height: 1px;
+  width: 100%;
+  background-color: rgb(236, 235, 235);
+  margin: 5px 0px;
+}
+
+.change_bg_color_button {
+  font-size: 12px;
+  padding: 0px 5px;
+}
+
+.bg_colors_container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 5px;
+  flex-wrap: wrap;
+}
+
+[class^="bg_color_"] {
+  height: 25px;
+  width: 25px;
+  border: 1px solid rgb(233, 230, 230);
+  border-radius: 8px;
 }

@@ -4,20 +4,22 @@ function TextTool() {
   this.icon = `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-type"><polyline points="4 7 4 4 20 4 20 7"/><line x1="9" x2="15" y1="20" y2="20"/><line x1="12" x2="12" y1="4" y2="20"/></svg>`;
   this.name = "text";
   var self = this;
-  this.toolKey = ["9", "t"];
+  this.toolKey = ["t"];
   this.input = null;
   this.currentElementId = null;
   this.posX = null;
   this.posY = null;
 
-  this.populateOptions = function () {
+  this.populateOptions = function (custom) {
     select(".options").html(`
-      <label for='fontSize'>Font Size</label>
-      <input type='range' min='14' max='28' value='14' class='slider' id='fontSize'>  
+      <label style='color:black;font-size:20px;' for='fontSize'>Font Size</label>
+      <input type='range' min='14' max='40' value='14' class='slider' id='fontSize'>  
     `);
 
-    document.getElementById("fontSize").addEventListener("change", function () {
+    document.getElementById("fontSize").addEventListener("input", function () {
       self.saveInStorage();
+
+      custom?.changeFontSize(document.getElementById("fontSize").value);
     });
 
     self.loadFromStorage();

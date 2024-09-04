@@ -12,7 +12,7 @@ function DiamondTool() {
   this.toolKey = "3";
 
   // Method to add tool options to the UI
-  this.populateOptions = function () {
+  this.populateOptions = function (custom) {
     select(".options").html(
       `<label style='color:black;font-size:20px;' for='diamondTool'>Stroke width</label> 
       <input type='range' min='4' max='25' value='1' class='slider' id='diamondTool'> 
@@ -24,12 +24,16 @@ function DiamondTool() {
     select("#cbx").mouseClicked(function () {
       withStroke = !withStroke;
       self.saveInStorage();
+
+      custom?.toggleStroke(withStroke);
     });
 
     document
       .getElementById("diamondTool")
-      .addEventListener("change", function () {
+      .addEventListener("input", function () {
         self.saveInStorage();
+
+        custom?.changeStrokeWidth(select("#diamondTool").value());
       });
 
     self.loadFromStorage();

@@ -10,17 +10,17 @@ function ArrowTool() {
   this.toolKey = "4";
 
   // Method to add tool options to the UI
-  this.populateOptions = function () {
+  this.populateOptions = function (custom) {
     select(".options").html(
       `<label style='color:black;font-size:20px;' for='arrowTool'>Stroke width</label> 
       <input type='range' min='4' max='25' value='1' class='slider' id='arrowTool'>`
     );
 
-    document
-      .getElementById("arrowTool")
-      .addEventListener("change", function () {
-        self.saveInStorage();
-      });
+    document.getElementById("arrowTool").addEventListener("input", function () {
+      self.saveInStorage();
+
+      custom?.changeStrokeWidth(select("#arrowTool").value());
+    });
 
     self.loadFromStorage();
   };

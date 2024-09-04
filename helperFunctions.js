@@ -16,7 +16,7 @@ function HelperFunctions() {
   let saveImageButton = select("#saveImageButton");
   if (saveImageButton) {
     saveImageButton.mouseClicked(function () {
-      saveCanvas("myPicture", "jpg");
+      saveCanvas("canvas", "jpg");
     });
   }
 
@@ -56,6 +56,8 @@ function HelperFunctions() {
     const contextMenu = document.getElementById("contextMenu");
     contextMenu.style.display = "none";
   });
+
+  CanvasBackground();
 }
 
 function handleAction(action) {
@@ -78,4 +80,20 @@ const redo = () => {};
 
 function toolMousePressed() {
   return mouseIsPressed && mouseButton === LEFT;
+}
+
+/**
+ *
+ * @param {DrawElement} element - The element.
+ */
+function pointsBasedTool(element) {
+  if (
+    element.type === "freehand" ||
+    element.type === "sprayCan" ||
+    element.type === "angleBrush" ||
+    element.type === "rainbowBrush"
+  )
+    return true;
+
+  return false;
 }

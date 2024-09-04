@@ -237,6 +237,58 @@ const drawImage = (element) => {
 };
 
 /**
+ * @param {DrawElement} element - The element to draw.
+ */
+const drawAngleBrush = (element) => {
+  // Draw the selected box if the element is selected
+  if (element.selected) {
+    drawSelectedBox(element);
+  }
+
+  const strokeColor = handleDeletingColor(element, element.strokeColor);
+
+  strokeWeight(element.strokeWidth);
+  stroke(strokeColor);
+
+  element.points.forEach((point) => {
+    widthPlume = 8;
+    x = point.x;
+    y = point.y;
+    b = parseInt(widthPlume.toString());
+    z = y + b;
+
+    // draw
+    line(x - b, y - b, x + b, z);
+  });
+};
+
+/**
+ * @param {DrawElement} element - The element to draw.
+ */
+const drawRainbowBrush = (element) => {
+  // Draw the selected box if the element is selected
+  if (element.selected) {
+    drawSelectedBox(element);
+  }
+
+  strokeWeight(element.strokeWidth);
+
+  if (element.points.length > 1) {
+    for (let i = 1; i < element.points.length; i++) {
+      const strokeColor = handleDeletingColor(element, element.points[i].color);
+
+      stroke(strokeColor);
+      line(
+        element.points[i].x,
+        element.points[i].y,
+        element.points[i - 1].x,
+        element.points[i - 1].y
+      );
+    }
+  }
+};
+
+/**
  * @param {DrawElement} element - The element to draw a box on.
  */
 const drawSelectedBox = (element) => {
@@ -311,4 +363,6 @@ var nodesHandlers = {
   sprayCan: drawSpraycan,
   text: drawText,
   image: drawImage,
+  angleBrush: drawAngleBrush,
+  rainbowBrush: drawRainbowBrush,
 };
