@@ -25,6 +25,7 @@
  * @property {number} fontSize - The font size of the text.
  * @property {string} imageUrl - The URL of the image.
  * @property {boolean} editingImg - Whether the image is being edited.
+ * @property {number} version - The version of the element.
  */
 
 /**
@@ -35,6 +36,7 @@ const addElement = (element) => {
   elements.push({
     id: element.id ?? generateUUID(),
     ...element,
+    version: generateVersionNonce(),
   });
 
   saveElements();
@@ -63,13 +65,12 @@ const updateElement = (id, element) => {
  */
 const upsertElement = (element) => {
   const index = elements.findIndex((e) => e.id === element.id);
+
   if (index === -1) {
     addElement(element);
   } else {
     updateElement(element.id, element);
   }
-
-  saveElements();
 };
 
 /**
@@ -177,16 +178,14 @@ const hoveringElements = () => {
 
   for (const element of elements) {
     const elementBox = getElementBox(element);
-    if (!elementBox) return;
-    const { adjustedPosX, adjustedPosY, adjustedSizeX, adjustedSizeY } =
-      elementBox;
+    if (!elementBox) continue; // Skip elements without a bounding box
 
-    const topLeftX = adjustedPosX;
-    const topLeftY = adjustedPosY;
-    const bottomRightX = adjustedPosX + adjustedSizeX;
-    const bottomRightY = adjustedPosY + adjustedSizeY;
+    const topLeftX = elementBox.adjustedPosX;
+    const topLeftY = elementBox.adjustedPosY;
+    const bottomRightX = topLeftX + elementBox.adjustedSizeX;
+    const bottomRightY = topLeftY + elementBox.adjustedSizeY;
 
-    // Check if the mouse click is inside the bounding box
+    // Check if the mouse position is inside the bounding box
     if (
       mouseX >= topLeftX &&
       mouseX <= bottomRightX &&
@@ -223,7 +222,10 @@ const handleElementsSelection = () => {
   if (elementsFound.length > 0) {
     // Set the selected element
     if (elementsFound[foundElementsIndex]) {
-      updateElement(elementsFound[foundElementsIndex].id, { selected: true });
+      upsertElement({
+        id: elementsFound[foundElementsIndex].id,
+        selected: true,
+      });
 
       // Update the current index to the next element in the list
       foundElementsIndex = (foundElementsIndex + 1) % elementsFound.length;
@@ -261,6 +263,13 @@ const generateUUID = () => {
     return v.toString(16);
   });
 };
+
+/**
+ * Generates a version nonce.
+ */
+function generateVersionNonce() {
+  return Date.now(); // Unique based on time (milliseconds)
+}
 
 /**
  * Saves the elements to the local storage.
@@ -328,4 +337,30 @@ const removeInput = (element) => {
 const removeImage = (element) => {
   const imageExists = document.querySelector(`.uploadedImage-${element.id}`);
   if (imageExists) imageExists.remove();
+};
+
+const deleteGarbageElements = () => {
+  const images = document.querySelectorAll("[class^=uploadedImage-]");
+
+  // Check if images belong to an element
+  images.forEach((image) => {
+    const elementId = image.id.split("_")[1];
+    const element = findElementById(elementId);
+
+    if (!element) {
+      image.remove();
+    }
+  });
+
+  const inputs = document.querySelectorAll("[class^=textToolInput-]");
+
+  // Check if inputs belong to an element
+  inputs.forEach((input) => {
+    const elementId = input.id.split("_")[1];
+    const element = findElementById(elementId);
+
+    if (!element) {
+      input.remove();
+    }
+  });
 };

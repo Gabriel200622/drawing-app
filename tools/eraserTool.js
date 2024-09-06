@@ -15,39 +15,31 @@ function EraserTool() {
 
   // Method to handle the erasing logic
   this.draw = function () {
-    this.drawEraserCursor();
+    cursor(CROSS);
+
     this.handleDeletingElements();
 
-    this.toDeleteElements.forEach((e) => {
+    for (const e of this.toDeleteElements) {
       updateElement(e.id, { deleting: true });
-    });
+    }
   };
 
   this.handleDeletingElements = function () {
     const { elements } = hoveringElements();
 
     if (mouseIsPressed) {
-      elements.forEach((e) => {
-        this.toDeleteElements.push(e);
-      });
+      for (const e of elements) {
+        if (!this.toDeleteElements.some((el) => el.id === e.id)) {
+          this.toDeleteElements.push(e);
+        }
+      }
     }
   };
 
   this.mouseReleased = function () {
-    this.toDeleteElements.map((e) => {
+    for (const e of this.toDeleteElements) {
       deleteElement(e.id);
-    });
+    }
     this.toDeleteElements = [];
-  };
-
-  this.drawEraserCursor = function () {
-    push();
-    noCursor();
-    stroke(0);
-    strokeWeight(1.2);
-    noFill();
-
-    ellipse(mouseX, mouseY, this.eraserSize / 2, this.eraserSize / 2);
-    pop();
   };
 }

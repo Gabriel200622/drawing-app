@@ -1,6 +1,6 @@
 - Frame Tool ()
-- Undo and redo ()
 - Add more tools (min 10!) ()
+- Undo and redo (DONE)
 - Node based UI (DONE)
 - Image Tool (DONE)
 - Save configs in local storage (DONE)

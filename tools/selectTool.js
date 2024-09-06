@@ -9,8 +9,6 @@ function SelectTool() {
 
   const buttonSize = 10;
 
-  // this.populateOptions = function () {};
-
   this.draw = function () {
     cursor(CROSS);
 
@@ -137,11 +135,12 @@ function SelectTool() {
             color: point.color ?? undefined,
           }));
 
-          updateElement(element.id, { points: newPoints });
+          upsertElement({ id: element.id, points: newPoints });
         } else {
           const { posX, posY } = element;
 
-          updateElement(element.id, {
+          upsertElement({
+            id: element.id,
             posX: posX + (mouseX - pmouseX),
             posY: posY + (mouseY - pmouseY),
           });

@@ -13,6 +13,8 @@ var toolbox = null;
 var colourP = null;
 var backgroundP = null;
 var helpers = null;
+/** @type {HistoryManager} */
+var historyManager = null;
 
 /** @type {DrawElement[]} */
 var elements = [];
@@ -35,6 +37,7 @@ function setup() {
   helpers = new HelperFunctions();
   colourP = new ColourPalette();
   backgroundP = new BackgroundPalette();
+  historyManager = new HistoryManager();
 
   // create a toolbox for storing the tools
   toolbox = new Toolbox();
@@ -65,6 +68,7 @@ function setup() {
   backgroundP.loadSavedColor();
 
   elements = getSavedElements() ?? [];
+  historyManager.undoStack = [[...elements]];
 
   // Call the setup function for each tool in the toolbox
   toolbox.tools.forEach((tool) => {
@@ -116,9 +120,6 @@ function draw() {
   if (!insideCanvas() && toolbox.selectedTool.hasOwnProperty("onMouseOut")) {
     toolbox.selectedTool.onMouseOut();
   }
-
-  // drawTooltip(mouseX, mouseY);
-  // console.log(elements);
 
   // call the draw function from the selected tool
   if (toolbox.selectedTool.hasOwnProperty("draw")) {
@@ -173,6 +174,17 @@ function mouseReleased(e) {
     mouseButton === LEFT
   ) {
   }
+
+  if (
+    !deepEqual(elements, historyManager.undoStack[historyManager.stackIndex])
+  ) {
+    elements = elements.map((e) => ({
+      ...e,
+      version: generateVersionNonce(),
+    }));
+
+    historyManager.saveState(elements);
+  }
 }
 
 function mouseDragged(e) {
@@ -186,9 +198,11 @@ function mouseDragged(e) {
 function keyPressed(e) {
   // Undo
   if (e.keyCode == 90 && (e.ctrlKey || e.metaKey)) {
+    undo();
   }
   // Redo
   if (e.keyCode == 89 && (e.ctrlKey || e.metaKey)) {
+    redo();
   }
 
   // Del key

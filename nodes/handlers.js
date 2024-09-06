@@ -208,6 +208,7 @@ const drawText = (element) => {
     const input = createInput(element.text);
     input.position(element.posX, element.posY);
     input.elt.classList.add(`textToolInput-${element.id}`);
+    input.elt.id = `textToolInput_${element.id}`;
   }
 };
 
@@ -233,6 +234,7 @@ const drawImage = (element) => {
     image.size(element.sizeX, element.sizeY);
     image.position(element.posX, element.posY);
     image.elt.classList.add(`uploadedImage-${element.id}`);
+    image.elt.id = `uploadedImage_${element.id}`;
   }
 };
 

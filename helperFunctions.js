@@ -74,9 +74,19 @@ function handleAction(action) {
 }
 
 // Context menu actions
-const undo = () => {};
+const undo = () => {
+  elements = historyManager.undo(elements);
 
-const redo = () => {};
+  deleteGarbageElements();
+  saveElements();
+};
+
+const redo = () => {
+  elements = historyManager.redo(elements);
+
+  deleteGarbageElements();
+  saveElements();
+};
 
 function toolMousePressed() {
   return mouseIsPressed && mouseButton === LEFT;
@@ -96,4 +106,54 @@ function pointsBasedTool(element) {
     return true;
 
   return false;
+}
+
+/**
+ * Check if two arrays are deeply equal
+ */
+function deepEqual(arr1, arr2) {
+  // First, check if both are arrays and have the same length
+  if (
+    !Array.isArray(arr1) ||
+    !Array.isArray(arr2) ||
+    arr1.length !== arr2.length
+  ) {
+    return false;
+  }
+
+  // Function to compare two values (including objects and arrays)
+  function isEqual(val1, val2) {
+    if (typeof val1 === "object" && typeof val2 === "object") {
+      return deepEqual(val1, val2);
+    }
+    return val1 === val2;
+  }
+
+  // Loop through each element and compare it deeply
+  for (let i = 0; i < arr1.length; i++) {
+    let el1 = arr1[i];
+    let el2 = arr2[i];
+
+    // If elements are objects, check all their fields
+    if (typeof el1 === "object" && typeof el2 === "object") {
+      const keys1 = Object.keys(el1);
+      const keys2 = Object.keys(el2);
+
+      // Check if both objects have the same keys
+      if (keys1.length !== keys2.length) {
+        return false;
+      }
+
+      // Compare all keys and values
+      for (let key of keys1) {
+        if (!isEqual(el1[key], el2[key])) {
+          return false;
+        }
+      }
+    } else if (!isEqual(el1, el2)) {
+      return false; // For non-object elements, compare directly
+    }
+  }
+
+  return true; // If all checks passed, the arrays are equal
 }

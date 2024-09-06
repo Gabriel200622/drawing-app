@@ -68,7 +68,10 @@ function EllipseTool() {
   };
 
   this.mouseReleased = function () {
-    updateElement(this.currentElementId, { selected: true });
+    upsertElement({
+      id: this.currentElementId,
+      selected: true,
+    });
 
     this.currentElementId = null;
     this.posX = null;
