@@ -8,7 +8,7 @@
 /**
  * @typedef {Object} DrawElement
  * @property {string} id - The unique identifier of the element.
- * @property {"ellipse" | "square" | "diamond" | "arrow" | "lineTo" | "freehand" | "sprayCan" | "mirrorDraw" | "text" | "image" | "angleBrush" | "rainbowBrush"} type - The type of the element.
+ * @property {"ellipse" | "square" | "diamond" | "arrow" | "lineTo" | "freehand" | "sprayCan" | "mirrorDraw" | "text" | "image" | "angleBrush" | "rainbowBrush" | "highlighter" | "frame"} type - The type of the element.
  * @property {number} posX - The X position of the element.
  * @property {number} posY - The Y position of the element.
  * @property {number} sizeX - The width of the element.
@@ -25,7 +25,7 @@
  * @property {number} fontSize - The font size of the text.
  * @property {string} imageUrl - The URL of the image.
  * @property {boolean} editingImg - Whether the image is being edited.
- * @property {number} version - The version of the element.
+ * @property {string} version - The version of the element.
  */
 
 /**
@@ -36,7 +36,7 @@ const addElement = (element) => {
   elements.push({
     id: element.id ?? generateUUID(),
     ...element,
-    version: generateVersionNonce(),
+    version: generateUUID(),
   });
 
   saveElements();
@@ -106,6 +106,8 @@ const emptyElements = () => {
   });
 
   elements = [];
+
+  historyManager.saveState(elements);
 
   saveElements();
 };
@@ -242,6 +244,18 @@ const handleElementsSelection = () => {
 const handleDeletingColor = (element, currentColor) => {
   const customColor = color(currentColor);
   if (element.deleting) customColor.setAlpha(30);
+
+  return customColor;
+};
+
+/**
+ * Get the color with the alpha value.
+ * @param {string} color - The color to get the alpha value.
+ * @param {number} alpha - The alpha value.
+ */
+const getAlphaColor = (currentColor, alpha) => {
+  const customColor = color(currentColor);
+  customColor.setAlpha(alpha);
 
   return customColor;
 };

@@ -291,6 +291,58 @@ const drawRainbowBrush = (element) => {
 };
 
 /**
+ * @param {DrawElement} element - The element to draw.
+ */
+const drawHighlighter = (element) => {
+  push();
+
+  // Draw the selected box if the element is selected
+  if (element.selected) {
+    drawSelectedBox(element);
+  }
+
+  const strokeColor = handleDeletingColor(element, element.strokeColor);
+
+  strokeWeight(element.strokeWidth);
+  strokeCap(SQUARE);
+  stroke(element.deleting ? strokeColor : getAlphaColor(strokeColor, 70));
+
+  if (element.points.length > 1) {
+    for (let i = 1; i < element.points.length; i++) {
+      line(
+        element.points[i].x,
+        element.points[i].y,
+        element.points[i - 1].x,
+        element.points[i - 1].y
+      );
+    }
+  }
+
+  pop();
+};
+
+/**
+ * @param {DrawElement} element - The element to draw.
+ */
+const drawFrame = (element) => {
+  push();
+
+  // Draw the selected box if the element is selected
+  if (element.selected) {
+    drawSelectedBox(element);
+  }
+
+  const strokeColor = handleDeletingColor(element, 199, 197, 193);
+
+  fill(255, 255, 255, 0);
+  strokeWeight(3);
+  stroke(strokeColor);
+  rect(element.posX, element.posY, element.sizeX, element.sizeY, 10);
+
+  pop();
+};
+
+/**
  * @param {DrawElement} element - The element to draw a box on.
  */
 const drawSelectedBox = (element) => {
@@ -314,6 +366,7 @@ const drawSelectedBox = (element) => {
     adjustedSizeY + selectedBoxMargin * 2
   );
 
+  if (pointsBasedTool(element)) return;
   // Draw buttons in each corner of the selection box
   fill(255);
   stroke(0, 0, 150);
@@ -367,4 +420,6 @@ var nodesHandlers = {
   image: drawImage,
   angleBrush: drawAngleBrush,
   rainbowBrush: drawRainbowBrush,
+  highlighter: drawHighlighter,
+  frame: drawFrame,
 };

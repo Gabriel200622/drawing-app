@@ -1,5 +1,5 @@
-- Frame Tool ()
-- Add more tools (min 10!) ()
+- Frame Tool (DONE)
+- Add more tools (min 10!) (DONE)
 - Undo and redo (DONE)
 - Node based UI (DONE)
 - Image Tool (DONE)

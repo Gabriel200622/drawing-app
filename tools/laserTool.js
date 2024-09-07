@@ -6,6 +6,7 @@ function LaserTool() {
   var points = [];
   var laserDuration = 400; // (in ms)
   this.type = "notSaveInHistory";
+  this.toolKey = "l";
 
   this.draw = function () {
     push();
@@ -32,9 +33,6 @@ function LaserTool() {
       previousMouseX = -1;
       previousMouseY = -1;
     }
-
-    // Clear the screen each frame
-    clear();
 
     // Draw the points stored in the array
     for (let i = points.length - 1; i >= 0; i--) {

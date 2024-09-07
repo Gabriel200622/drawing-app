@@ -123,7 +123,71 @@ function SelectTool() {
   this.handleMoveElement = function () {
     elements.forEach((element) => {
       if (element.selected && !selectedCorner) {
-        if (pointsBasedTool(element)) {
+        if (element.type === "frame") {
+          const {
+            posX: frameX,
+            posY: frameY,
+            sizeX: frameWidth,
+            sizeY: frameHeight,
+          } = element;
+
+          // Calculate the movement delta
+          const dx = mouseX - pmouseX;
+          const dy = mouseY - pmouseY;
+
+          // Move the frame
+          upsertElement({
+            id: element.id,
+            posX: frameX + dx,
+            posY: frameY + dy,
+          });
+
+          // Find and move all elements inside the frame
+          elements.forEach((childElement) => {
+            // Check if the element is points-based
+            if (pointsBasedTool(childElement)) {
+              const { points } = childElement;
+
+              // Check if any point is inside the frame
+              const isInsideFrame = points.some(
+                (point) =>
+                  point.x >= frameX &&
+                  point.y >= frameY &&
+                  point.x <= frameX + frameWidth &&
+                  point.y <= frameY + frameHeight
+              );
+
+              if (isInsideFrame) {
+                // Move points-based elements
+                const newPoints = points.map((point) => ({
+                  x: point.x + dx,
+                  y: point.y + dy,
+                  color: point.color ?? undefined,
+                }));
+
+                upsertElement({ id: childElement.id, points: newPoints });
+              }
+            } else {
+              // For regular elements, check if the entire element is inside the frame
+              const { posX, posY, sizeX, sizeY } = childElement;
+              const isInsideFrame =
+                posX >= frameX &&
+                posY >= frameY &&
+                posX + sizeX <= frameX + frameWidth &&
+                posY + sizeY <= frameY + frameHeight;
+
+              if (isInsideFrame) {
+                // Move non-points-based elements
+                upsertElement({
+                  id: childElement.id,
+                  posX: posX + dx,
+                  posY: posY + dy,
+                });
+              }
+            }
+          });
+        } else if (pointsBasedTool(element)) {
+          // Move points-based elements that are not inside a frame
           const { points } = element;
 
           const dx = mouseX - pmouseX;
@@ -137,6 +201,7 @@ function SelectTool() {
 
           upsertElement({ id: element.id, points: newPoints });
         } else {
+          // Move other elements that are not inside a frame
           const { posX, posY } = element;
 
           upsertElement({

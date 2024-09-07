@@ -1,5 +1,4 @@
-//global variables that will store the toolbox colour palette
-
+// Colors for the background of the canvas
 const BG_COLORS = [
   { color: "#ffffff" },
   { color: "#f8f9fa" },
@@ -52,12 +51,14 @@ function setup() {
   toolbox.addTool(new SprayCanTool());
   toolbox.addTool(new AngleBrushTool());
   toolbox.addTool(new RainbowBrushTool());
-  toolbox.addTool(new MirrorDrawTool());
+  toolbox.addTool(new HighlighterTool());
+  // toolbox.addTool(new MirrorDrawTool());
   toolbox.addTool(new TextTool());
   toolbox.addTool(new EraserTool());
   toolbox.addTool(new LaserTool());
   toolbox.addTool(new ImageTool());
   toolbox.addTool(new SelectTool());
+  toolbox.addTool(new FrameTool());
 
   const selectedTool = getConfig("selectedTool", toolbox.tools[0].name);
   toolbox.selectTool(selectedTool ?? toolbox.tools[0].name);
@@ -175,12 +176,15 @@ function mouseReleased(e) {
   ) {
   }
 
-  if (
-    !deepEqual(elements, historyManager.undoStack[historyManager.stackIndex])
-  ) {
+  const equal = deepEqual(
+    elements,
+    historyManager.undoStack[historyManager.stackIndex]
+  );
+
+  if (!equal) {
     elements = elements.map((e) => ({
       ...e,
-      version: generateVersionNonce(),
+      version: generateUUID(),
     }));
 
     historyManager.saveState(elements);

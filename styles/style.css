@@ -289,3 +289,15 @@ body {
   border: 1px solid rgb(233, 230, 230);
   border-radius: 8px;
 }
+
+pre {
+  background-color: #f4f4f4;
+  padding: 10px;
+  border-radius: 5px;
+  border: 1px solid #ddd;
+  overflow-x: auto; /* Handles long code lines */
+}
+code {
+  font-family: Consolas, Monaco, "Courier New", monospace;
+  color: #d6336c;
+}

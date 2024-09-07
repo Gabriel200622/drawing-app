@@ -101,7 +101,8 @@ function pointsBasedTool(element) {
     element.type === "freehand" ||
     element.type === "sprayCan" ||
     element.type === "angleBrush" ||
-    element.type === "rainbowBrush"
+    element.type === "rainbowBrush" ||
+    element.type === "highlighter"
   )
     return true;
 
