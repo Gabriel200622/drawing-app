@@ -169,25 +169,20 @@ function mouseReleased(e) {
   }
 
   // Handle history
-  if (
-    insideCanvas() &&
-    toolbox.selectedTool.type !== "notSaveInHistory" &&
-    mouseButton === LEFT
-  ) {
-  }
+  if (insideCanvas() && e.button === 0) {
+    const equal = deepEqual(
+      elements,
+      historyManager.undoStack[historyManager.stackIndex]
+    );
 
-  const equal = deepEqual(
-    elements,
-    historyManager.undoStack[historyManager.stackIndex]
-  );
+    if (!equal) {
+      elements = elements.map((e) => ({
+        ...e,
+        version: generateUUID(),
+      }));
 
-  if (!equal) {
-    elements = elements.map((e) => ({
-      ...e,
-      version: generateUUID(),
-    }));
-
-    historyManager.saveState(elements);
+      historyManager.saveState(elements);
+    }
   }
 }
 

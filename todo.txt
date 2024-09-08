@@ -7,3 +7,48 @@
 - Save drawing in local stroage (DONE)
 - Laser pointer (DONE)
 - Context Menu (DONE)
+
+
+----------------------------------------------------------------------
+
+
+Main ideas for my report
+- Changes were made to the styles of the app, more menus were added, a context menu, drop downs, etc.
+- List the new tools
+- Explaint the node based UI (structure, code, modularity, etc)
+- Functionality to save the drawing and the config made to stroke weight, stokre colors, and sizes, in local storage
+- Undo and redo functionality
+- Change the background of the canvas
+- Panning on the canvas, giving it the effect of "infinite"
+
+
+----------------------------------------------------------------------
+
+
+Prompt:
+For college I created a programming project called "Drawing App", it's made with p5.js, html, css and js. Some of the tools and functionalities I implemented into the app are:
+- Frame Tool (all the elements inside move when you move the frame tool)
+- Undo and redo
+- Node based UI
+- Image Tool
+- Save configs in local storage
+- Save drawing in local storage
+- Laser pointer
+- Context Menu
+Some of the tools I implemented are:
+- EllipseTool
+- SquareTool
+- DiamondTool
+- ArrowTool
+- LineTool
+- Freehand or pencil Tool
+- SprayCanTool
+- AngleBrushTool (basically a brush)
+- RainbowBrushTool (like the pencil but the color is always rainbow)
+- HighlighterTool
+- TextTool
+- EraserTool
+- LaserTool
+- ImageTool
+- SelectTool (to select, move and resize other elements)
+- FrameTool
